@@ -13,6 +13,6 @@ func checkNilErr(err error) {
 func main() {
 	// fmt.Println("Hello there!")
 	box := tview.NewBox().SetBorder(true).SetTitle("Hello there!")
-	err := tview.NewApplication().SetRoot(box, true).Run()
+	err := tview.NewApplication().SetRoot(box, true).EnableMouse(true).Run()
 	checkNilErr(err)
 }
