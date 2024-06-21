@@ -10,9 +10,12 @@ func checkNilErr(err error) {
 	}
 }
 
+var (
+	mainBox = tview.NewBox().SetBorder(true).SetTitle("Cheatscript")
+	app     = tview.NewApplication()
+)
+
 func main() {
-	// fmt.Println("Hello there!")
-	box := tview.NewBox().SetBorder(true).SetTitle("Hello there!")
-	err := tview.NewApplication().SetRoot(box, true).EnableMouse(true).Run()
+	err := app.SetRoot(mainBox, true).EnableMouse(true).Run()
 	checkNilErr(err)
 }
