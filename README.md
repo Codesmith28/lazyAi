@@ -7,5 +7,5 @@ A cheating script made using go.
 Clone the repository and run :
 
 ```
-    go mod download
+go mod download
 ```
