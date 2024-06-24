@@ -31,13 +31,13 @@ func main() {
 
 	// Group 4: inputPane and modelsPane in a horizontal layout
 	group4 := tview.NewFlex().SetDirection(tview.FlexColumn).
-		AddItem(inputPane, 0, 1, false).
+		AddItem(inputPane, 0, 3, false).
 		AddItem(modelsPane, 0, 1, false)
 
 	// Group 3: Group 4 and outputPane in a vertical layout
 	group3 := tview.NewFlex().SetDirection(tview.FlexRow).
-		AddItem(group4, 0, 1, false).
-		AddItem(outputPane, 0, 2, false)
+		AddItem(group4, 0, 9, false).
+		AddItem(outputPane, 0, 10, false)
 
 	// Group 1: Group 2 and Group 3 in a horizontal layout
 	group1 := tview.NewFlex().SetDirection(tview.FlexColumn).
