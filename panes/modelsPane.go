@@ -1,21 +1,32 @@
 package panes
 
 import (
+	"fmt"
+
 	"github.com/rivo/tview"
 )
 
 var (
 	// ModelsPane is a flex layout containing the title and list of models.
-	ModelsPane = tview.NewFlex()
-	modelList  = tview.NewList()
+	ModelsPane    = tview.NewFlex()
+	ModelList     = tview.NewList() // Export ModelList to access it
+	selectedModel string
 )
 
 func init() {
 	// Configure the model list
-	modelList.ShowSecondaryText(false).SetTitle("Models").SetBorder(true)
-	modelList.AddItem("Model 1", "", 0, nil)
-	modelList.AddItem("Model 2", "", 0, nil)
+	ModelList.ShowSecondaryText(false).SetTitle("Models").SetBorder(true)
+
+	// Add models to the list
+	ModelList.AddItem("Model 1", "", 0, func() {
+		selectedModel = "Model 1"
+		fmt.Println("Selected Model 1")
+	})
+	ModelList.AddItem("Model 2", "", 0, func() {
+		selectedModel = "Model 2"
+		fmt.Println("Selected Model 2")
+	})
 
 	// Add the model list to the flex layout
-	ModelsPane.AddItem(modelList, 0, 1, true)
+	ModelsPane.AddItem(ModelList, 0, 1, true)
 }
