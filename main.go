@@ -14,7 +14,8 @@ var (
 	outputPane      = panes.OutputPane
 	promptPane      = panes.PromptPane
 	keybindingsPane = panes.KeybindingsPane
-	modelList       = panes.ModelList // Export ModelList to access it
+
+	modelList = panes.ModelList
 )
 
 func checkNilErr(err error) {
@@ -57,21 +58,24 @@ func main() {
 		case tcell.KeyRune:
 			switch event.Rune() {
 			case '1':
-				app.SetFocus(historyPane)
+				app.SetFocus(inputPane)
 			case '2':
 				app.SetFocus(modelList)
 			case '3':
-				app.SetFocus(inputPane)
-			case '4':
 				app.SetFocus(outputPane)
+			case '4':
+				app.SetFocus(historyPane)
 			case '5':
 				app.SetFocus(promptPane)
-			case '6':
+			case '?':
 				app.SetFocus(keybindingsPane)
 			}
 		}
 		return event
 	})
+
+	// Set the default focus to inputPane
+	app.SetFocus(inputPane)
 
 	// Set up the application root
 	err := app.SetRoot(mainFlex, true).Run()
