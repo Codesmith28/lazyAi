@@ -47,7 +47,7 @@ func main() {
 	// Main Flex: Group 1 and keybindingsPane in a vertical layout
 	mainFlex := tview.NewFlex().SetDirection(tview.FlexRow).
 		AddItem(group1, 0, 4, false).
-		AddItem(keybindingsPane, 1, 0, false)
+		AddItem(keybindingsPane, 3, 1, false)
 
 	// Set up the application root
 	err := app.SetRoot(mainFlex, true).Run()
