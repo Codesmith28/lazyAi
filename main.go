@@ -16,7 +16,7 @@ var (
 	outputPane      = panes.OutputPane
 	promptPane      = panes.PromptPane
 	keybindingsPane = panes.KeybindingsPane
-	textPane        = panes.TextView
+	inputPane       = panes.InputPane
 
 	modelList = panes.ModelList
 )
@@ -37,7 +37,7 @@ func main() {
 		AddItem(historyPane, 0, 1, false).
 		AddItem(promptPane, 0, 1, false)
 
-	textPane.SetWrap(true).
+	inputPane.SetWrap(true).
 		SetScrollable(true).
 		SetBorder(true).
 		SetTitle(" Input Data: ").
@@ -45,14 +45,14 @@ func main() {
 
 	// Group 4: inputPane and modelsPane in a horizontal layout
 	group4 := tview.NewFlex().SetDirection(tview.FlexColumn).
-		AddItem(textPane, 0, 1, false).
+		AddItem(inputPane, 0, 1, false).
 		AddItem(modelsPane, 0, 1, true) // Set focusable to true
 
 	go func() {
 		for {
 			text, _ := clipboard.GetClipboardText()
 			app.QueueUpdateDraw(func() {
-				textPane.SetText("Prompt: " + text)
+				inputPane.SetText("Prompt: " + text)
 			})
 
 			time.Sleep(1 * time.Second)
@@ -80,7 +80,7 @@ func main() {
 		case tcell.KeyRune:
 			switch event.Rune() {
 			case '1':
-				app.SetFocus(textPane)
+				app.SetFocus(inputPane)
 			case '2':
 				app.SetFocus(modelList)
 			case '3':
@@ -93,17 +93,17 @@ func main() {
 				app.SetFocus(keybindingsPane)
 			}
 		case tcell.KeyUp:
-			currRow, _ := textPane.GetScrollOffset()
-			textPane.ScrollTo(currRow-1, 0)
+			currRow, _ := inputPane.GetScrollOffset()
+			inputPane.ScrollTo(currRow-1, 0)
 		case tcell.KeyDown:
-			currRow, _ := textPane.GetScrollOffset()
-			textPane.ScrollTo(currRow+1, 0)
+			currRow, _ := inputPane.GetScrollOffset()
+			inputPane.ScrollTo(currRow+1, 0)
 		}
 		return event
 	})
 
 	// Set the default focus to inputPane
-	app.SetFocus(textPane)
+	app.SetFocus(inputPane)
 
 	// Set up the application root
 	err := app.SetRoot(mainFlex, true).Run()
