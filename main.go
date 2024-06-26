@@ -4,10 +4,10 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
 
 	"github.com/Codesmith28/cheatScript/internal/clipboard"
 	"github.com/Codesmith28/cheatScript/panes"
-	"github.com/rivo/tview"
 )
 
 var (
@@ -37,7 +37,11 @@ func main() {
 		AddItem(historyPane, 0, 1, false).
 		AddItem(promptPane, 0, 1, false)
 
-	textPane.SetWrap(true).SetScrollable(true).SetBorder(true).SetTitle(" Input Data: ").SetBorderPadding(1, 1, 2, 2)
+	textPane.SetWrap(true).
+		SetScrollable(true).
+		SetBorder(true).
+		SetTitle(" Input Data: ").
+		SetBorderPadding(1, 1, 2, 2)
 
 	// Group 4: inputPane and modelsPane in a horizontal layout
 	group4 := tview.NewFlex().SetDirection(tview.FlexColumn).
