@@ -31,3 +31,7 @@ func StartMonitoring() {
 func GetClipboardText() (string, error) {
 	return <-prompt, nil
 }
+
+func Clear() error {
+	return clipboard.WriteAll(" ")
+}

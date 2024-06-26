@@ -30,6 +30,7 @@ func checkNilErr(err error) {
 func main() {
 	app := tview.NewApplication()
 	go clipboard.StartMonitoring()
+	clipboard.Clear()
 
 	// Group 2: historyPane and promptPane in a vertical layout
 	group2 := tview.NewFlex().SetDirection(tview.FlexRow).
@@ -87,6 +88,12 @@ func main() {
 			case '?':
 				app.SetFocus(keybindingsPane)
 			}
+		case tcell.KeyUp:
+			currRow, _ := textPane.GetScrollOffset()
+			textPane.ScrollTo(currRow-1, 0)
+		case tcell.KeyDown:
+			currRow, _ := textPane.GetScrollOffset()
+			textPane.ScrollTo(currRow+1, 0)
 		}
 		return event
 	})
