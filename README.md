@@ -9,3 +9,15 @@ Clone the repository and run :
 ```
 go mod download
 ```
+
+Run the project and view log files:
+
+```
+go run main.go > app.log 2>&1
+```
+
+to view your logs:
+
+```
+tail -f app.log
+```

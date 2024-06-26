@@ -3,6 +3,7 @@ package internal
 type HistoryItem struct {
 	Query string
 	Date  string
+	Model string
 	SrNo  int
 }
 
@@ -20,6 +21,7 @@ type Input struct {
 
 type FormattedInput struct {
 	Input  string
+	Model  string
 	Prompt string
 }
 
