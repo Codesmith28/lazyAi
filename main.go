@@ -1,18 +1,20 @@
 package main
 
 import (
-	"github.com/rivo/tview"
+	"time"
 
+	"github.com/Codesmith28/cheatScript/internal/clipboard"
 	"github.com/Codesmith28/cheatScript/panes"
+	"github.com/rivo/tview"
 )
 
 var (
 	historyPane     = panes.HistoryPane
-	inputPane       = panes.InputPane
 	modelsPane      = panes.ModelsPane
 	outputPane      = panes.OutputPane
 	promptPane      = panes.PromptPane
 	keybindingsPane = panes.KeybindingsPane
+	textPane        = panes.TextView
 )
 
 func checkNilErr(err error) {
@@ -23,16 +25,32 @@ func checkNilErr(err error) {
 
 func main() {
 	app := tview.NewApplication()
+	go clipboard.StartMonitoring()
 
 	// Group 2: historyPane and promptPane in a vertical layout
 	group2 := tview.NewFlex().SetDirection(tview.FlexRow).
 		AddItem(historyPane, 0, 1, false).
 		AddItem(promptPane, 0, 1, false)
 
+	textView := textPane
+
+	textView.SetWrap(true).SetScrollable(true).SetBorder(true).SetTitle(" Input Data: ").SetBorderPadding(1, 1, 2, 2)
+
 	// Group 4: inputPane and modelsPane in a horizontal layout
 	group4 := tview.NewFlex().SetDirection(tview.FlexColumn).
-		AddItem(inputPane, 0, 3, false).
+		AddItem(textView, 0, 3, false).
 		AddItem(modelsPane, 0, 1, false)
+
+	go func() {
+		for {
+			text, _ := clipboard.GetClipboardText()
+			app.QueueUpdateDraw(func() {
+				textView.SetText("Prompt: " + text)
+			})
+
+			time.Sleep(1 * time.Second)
+		}
+	}()
 
 	// Group 3: Group 4 and outputPane in a vertical layout
 	group3 := tview.NewFlex().SetDirection(tview.FlexRow).
