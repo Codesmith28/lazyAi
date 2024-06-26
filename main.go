@@ -1,19 +1,22 @@
 package main
 
 import (
-	"github.com/gdamore/tcell/v2"
-	"github.com/rivo/tview"
+	"time"
 
+	"github.com/gdamore/tcell/v2"
+
+	"github.com/Codesmith28/cheatScript/internal/clipboard"
 	"github.com/Codesmith28/cheatScript/panes"
+	"github.com/rivo/tview"
 )
 
 var (
 	historyPane     = panes.HistoryPane
-	inputPane       = panes.InputPane
 	modelsPane      = panes.ModelsPane
 	outputPane      = panes.OutputPane
 	promptPane      = panes.PromptPane
 	keybindingsPane = panes.KeybindingsPane
+	textPane        = panes.TextView
 
 	modelList = panes.ModelList
 )
@@ -26,16 +29,30 @@ func checkNilErr(err error) {
 
 func main() {
 	app := tview.NewApplication()
+	go clipboard.StartMonitoring()
 
 	// Group 2: historyPane and promptPane in a vertical layout
 	group2 := tview.NewFlex().SetDirection(tview.FlexRow).
 		AddItem(historyPane, 0, 1, false).
 		AddItem(promptPane, 0, 1, false)
 
+	textPane.SetWrap(true).SetScrollable(true).SetBorder(true).SetTitle(" Input Data: ").SetBorderPadding(1, 1, 2, 2)
+
 	// Group 4: inputPane and modelsPane in a horizontal layout
 	group4 := tview.NewFlex().SetDirection(tview.FlexColumn).
-		AddItem(inputPane, 0, 1, false).
+		AddItem(textPane, 0, 1, false).
 		AddItem(modelsPane, 0, 1, true) // Set focusable to true
+
+	go func() {
+		for {
+			text, _ := clipboard.GetClipboardText()
+			app.QueueUpdateDraw(func() {
+				textPane.SetText("Prompt: " + text)
+			})
+
+			time.Sleep(1 * time.Second)
+		}
+	}()
 
 	// Group 3: Group 4 and outputPane in a vertical layout
 	group3 := tview.NewFlex().SetDirection(tview.FlexRow).
@@ -58,7 +75,7 @@ func main() {
 		case tcell.KeyRune:
 			switch event.Rune() {
 			case '1':
-				app.SetFocus(inputPane)
+				app.SetFocus(textPane)
 			case '2':
 				app.SetFocus(modelList)
 			case '3':
@@ -75,7 +92,7 @@ func main() {
 	})
 
 	// Set the default focus to inputPane
-	app.SetFocus(inputPane)
+	app.SetFocus(textPane)
 
 	// Set up the application root
 	err := app.SetRoot(mainFlex, true).Run()
