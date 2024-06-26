@@ -37,12 +37,6 @@ func main() {
 		AddItem(historyPane, 0, 1, false).
 		AddItem(promptPane, 0, 1, false)
 
-	inputPane.SetWrap(true).
-		SetScrollable(true).
-		SetBorder(true).
-		SetTitle(" Input Data: ").
-		SetBorderPadding(1, 1, 2, 2)
-
 	// Group 4: inputPane and modelsPane in a horizontal layout
 	group4 := tview.NewFlex().SetDirection(tview.FlexColumn).
 		AddItem(inputPane, 0, 1, false).
@@ -54,7 +48,6 @@ func main() {
 			app.QueueUpdateDraw(func() {
 				inputPane.SetText("Prompt: " + text)
 			})
-
 			time.Sleep(1 * time.Second)
 		}
 	}()
