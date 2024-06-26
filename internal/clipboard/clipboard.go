@@ -1,7 +1,6 @@
 package clipboard
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/atotto/clipboard"
@@ -14,9 +13,9 @@ var lastText string
 func StartMonitoring() {
 	for {
 		text, err := clipboard.ReadAll()
+
 		if err != nil {
-			fmt.Println("Error reading clipboard:", err)
-			continue
+			continue // might need to find a better way to handle this
 		}
 
 		if text != lastText {
