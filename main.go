@@ -28,7 +28,7 @@ func checkNilErr(err error) {
 }
 
 func main() {
-	app := tview.NewApplication()
+	app := tview.NewApplication().EnableMouse(true)
 	go clipboard.StartMonitoring()
 	clipboard.Clear()
 
@@ -88,9 +88,6 @@ func main() {
 		}
 		return event
 	})
-
-	// Set the default focus to inputPane
-	app.SetFocus(inputPane)
 
 	// Set up the application root
 	err := app.SetRoot(mainFlex, true).Run()
