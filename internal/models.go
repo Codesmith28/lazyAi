@@ -19,6 +19,10 @@ type Input struct {
 	InputString string
 }
 
+type Model struct {
+	SelectedModel string
+}
+
 type FormattedInput struct {
 	InputString  string
 	ModelName    string

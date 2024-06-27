@@ -4,26 +4,29 @@ import (
 	"fmt"
 
 	"github.com/rivo/tview"
+
+	"github.com/Codesmith28/cheatScript/internal"
 )
 
 var (
 	// ModelsPane is a flex layout containing the title and list of models.
-	ModelsPane    = tview.NewFlex()
-	ModelList     = tview.NewList() // Export ModelList to access it
-	selectedModel string
+	ModelsPane = tview.NewFlex()
+	ModelList  = tview.NewList() // Export ModelList to access it
+	Selected   *internal.Model
 )
 
 func init() {
 	// Configure the model list
 	ModelList.ShowSecondaryText(false).SetTitle("Models").SetBorder(true)
+	Selected = &internal.Model{}
 
 	// Add models to the list
 	ModelList.AddItem("Model 1", "", 0, func() {
-		selectedModel = "Model 1"
+		Selected.SelectedModel = "Model 1"
 		fmt.Println("Selected Model 1")
 	})
 	ModelList.AddItem("Model 2", "", 0, func() {
-		selectedModel = "Model 2"
+		Selected.SelectedModel = "Model 2"
 		fmt.Println("Selected Model 2")
 	})
 
