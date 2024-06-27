@@ -9,10 +9,12 @@ import (
 
 var (
 	PromptPane = tview.NewTextArea()
-	PromptText internal.Prompt
+	PromptText *internal.Prompt
 )
 
 func init() {
+	PromptText = &internal.Prompt{}
+
 	PromptPane.SetText(PromptText.PromptString, true).
 		SetWrap(true).
 		SetBorder(true).
