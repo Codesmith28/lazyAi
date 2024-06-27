@@ -32,16 +32,6 @@ func main() {
 	go clipboard.StartMonitoring()
 	clipboard.Clear()
 
-	// Group 2: historyPane and promptPane in a vertical layout
-	group2 := tview.NewFlex().SetDirection(tview.FlexRow).
-		AddItem(historyPane, 0, 1, false).
-		AddItem(promptPane, 0, 1, false)
-
-	// Group 4: inputPane and modelsPane in a horizontal layout
-	group4 := tview.NewFlex().SetDirection(tview.FlexColumn).
-		AddItem(inputPane, 0, 1, false).
-		AddItem(modelsPane, 0, 1, true) // Set focusable to true
-
 	go func() {
 		for {
 			text, _ := clipboard.GetClipboardText()
@@ -52,20 +42,30 @@ func main() {
 		}
 	}()
 
+	// Group 2: historyPane and promptPane in a vertical layout
+	group2 := tview.NewFlex().SetDirection(tview.FlexRow).
+		AddItem(historyPane, 0, 1, true).
+		AddItem(promptPane, 0, 1, true)
+
+	// Group 4: inputPane and modelsPane in a horizontal layout
+	group4 := tview.NewFlex().SetDirection(tview.FlexColumn).
+		AddItem(inputPane, 0, 1, true).
+		AddItem(modelsPane, 0, 1, true) // Set focusable to true
+
 	// Group 3: Group 4 and outputPane in a vertical layout
 	group3 := tview.NewFlex().SetDirection(tview.FlexRow).
-		AddItem(group4, 0, 1, false).
-		AddItem(outputPane, 0, 2, false)
+		AddItem(group4, 0, 1, true).
+		AddItem(outputPane, 0, 2, true)
 
 	// Group 1: Group 2 and Group 3 in a horizontal layout
 	group1 := tview.NewFlex().SetDirection(tview.FlexColumn).
-		AddItem(group2, 0, 1, false).
-		AddItem(group3, 0, 2, false)
+		AddItem(group2, 0, 1, true).
+		AddItem(group3, 0, 2, true)
 
 	// Main Flex: Group 1 and keybindingsPane in a vertical layout
 	mainFlex := tview.NewFlex().SetDirection(tview.FlexRow).
-		AddItem(group1, 0, 4, false).
-		AddItem(keybindingsPane, 3, 1, false)
+		AddItem(group1, 0, 4, true).
+		AddItem(keybindingsPane, 3, 1, true)
 
 	// Set up global keybindings to focus on each pane
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
