@@ -9,10 +9,12 @@ import (
 
 var (
 	InputPane = tview.NewTextView()
-	InputText internal.Input
+	InputText *internal.Input // Use a pointer here
 )
 
 func init() {
+	InputText = &internal.Input{} // Initialize the pointer
+
 	InputPane.
 		SetWrap(true).
 		SetScrollable(true).
@@ -30,7 +32,6 @@ func init() {
 			case tcell.KeyRune:
 				switch event.Rune() {
 				case '1', '2', '3', '4', '5', '?':
-					// Ignore these keys since they are used for pane switching
 					return nil
 				}
 			}
