@@ -1,12 +1,9 @@
 package main
 
 import (
-	"time"
-
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"github.com/Codesmith28/cheatScript/internal/clipboard"
 	"github.com/Codesmith28/cheatScript/panes"
 )
 
@@ -31,19 +28,7 @@ func checkNilErr(err error) {
 
 func main() {
 	app := tview.NewApplication().EnableMouse(true)
-	go clipboard.StartMonitoring()
-	clipboard.Clear()
-
-	go func() {
-		for {
-			text, _ := clipboard.GetClipboardText()
-			app.QueueUpdateDraw(func() {
-				InputText.InputString = text
-				panes.UpdateInputPane()
-			})
-			time.Sleep(1 * time.Second)
-		}
-	}()
+	panes.StartClipboardMonitoring(app)
 
 	// Create layout groups
 	group2 := panes.CreateGroup2(historyPane, promptPane)

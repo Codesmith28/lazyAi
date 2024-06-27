@@ -1,10 +1,13 @@
 package panes
 
 import (
+	"time"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
 	"github.com/Codesmith28/cheatScript/internal"
+	"github.com/Codesmith28/cheatScript/internal/clipboard"
 )
 
 var (
@@ -41,4 +44,20 @@ func init() {
 
 func UpdateInputPane() {
 	InputPane.SetText(InputText.InputString)
+}
+
+func StartClipboardMonitoring(app *tview.Application) {
+	go clipboard.StartMonitoring()
+	clipboard.Clear()
+
+	go func() {
+		for {
+			text, _ := clipboard.GetClipboardText()
+			app.QueueUpdateDraw(func() {
+				InputText.InputString = text
+				UpdateInputPane()
+			})
+			time.Sleep(1 * time.Second)
+		}
+	}()
 }
