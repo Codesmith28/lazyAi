@@ -2,13 +2,17 @@ package panes
 
 import (
 	"github.com/rivo/tview"
+
+	"github.com/Codesmith28/cheatScript/internal"
 )
 
-// var PromptPane = tview.NewBox().SetBorder(true).SetTitle(" Prompt ")
-var PromptPane = tview.NewTextArea()
+var (
+	PromptPane = tview.NewTextArea()
+	PromptText internal.Prompt
+)
 
 func init() {
-	PromptPane.
+	PromptPane.SetText(PromptText.Prompt, true).
 		SetWrap(true).
 		SetBorder(true).
 		SetTitle(" Prompt ").
