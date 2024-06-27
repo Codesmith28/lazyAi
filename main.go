@@ -85,12 +85,6 @@ func main() {
 			case '?':
 				app.SetFocus(keybindingsPane)
 			}
-		case tcell.KeyUp:
-			currRow, _ := inputPane.GetScrollOffset()
-			inputPane.ScrollTo(currRow-1, 0)
-		case tcell.KeyDown:
-			currRow, _ := inputPane.GetScrollOffset()
-			inputPane.ScrollTo(currRow+1, 0)
 		}
 		return event
 	})
