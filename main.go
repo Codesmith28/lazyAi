@@ -18,7 +18,9 @@ var (
 	keybindingsPane = panes.KeybindingsPane
 	inputPane       = panes.InputPane
 
-	modelList = panes.ModelList
+	ModelList  = panes.ModelList
+	PromptText = panes.PromptText
+	InputText  = panes.InputText
 )
 
 func checkNilErr(err error) {
@@ -36,7 +38,8 @@ func main() {
 		for {
 			text, _ := clipboard.GetClipboardText()
 			app.QueueUpdateDraw(func() {
-				inputPane.SetText("Prompt: " + text)
+				InputText.InputString = text
+				panes.UpdateInputPane()
 			})
 			time.Sleep(1 * time.Second)
 		}
@@ -74,16 +77,22 @@ func main() {
 			switch event.Rune() {
 			case '1':
 				app.SetFocus(inputPane)
+				return nil
 			case '2':
-				app.SetFocus(modelList)
+				app.SetFocus(ModelList)
+				return nil
 			case '3':
 				app.SetFocus(outputPane)
+				return nil
 			case '4':
 				app.SetFocus(historyPane)
+				return nil
 			case '5':
 				app.SetFocus(promptPane)
+				return nil
 			case '?':
 				app.SetFocus(keybindingsPane)
+				return nil
 			}
 		}
 		return event

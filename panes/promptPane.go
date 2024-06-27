@@ -13,7 +13,7 @@ var (
 )
 
 func init() {
-	PromptPane.SetText(PromptText.Prompt, true).
+	PromptPane.SetText(PromptText.PromptString, true).
 		SetWrap(true).
 		SetBorder(true).
 		SetTitle(" Prompt ").

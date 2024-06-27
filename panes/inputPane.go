@@ -3,9 +3,14 @@ package panes
 import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+
+	"github.com/Codesmith28/cheatScript/internal"
 )
 
-var InputPane = tview.NewTextView()
+var (
+	InputPane = tview.NewTextView()
+	InputText internal.Input
+)
 
 func init() {
 	InputPane.
@@ -22,7 +27,17 @@ func init() {
 			case tcell.KeyDown:
 				currRow, _ := InputPane.GetScrollOffset()
 				InputPane.ScrollTo(currRow+1, 0)
+			case tcell.KeyRune:
+				switch event.Rune() {
+				case '1', '2', '3', '4', '5', '?':
+					// Ignore these keys since they are used for pane switching
+					return nil
+				}
 			}
 			return event
 		})
+}
+
+func UpdateInputPane() {
+	InputPane.SetText(InputText.InputString)
 }
