@@ -9,11 +9,11 @@ import (
 
 var (
 	InputPane = tview.NewTextView()
-	InputText *internal.Input // Use a pointer here
+	InputText *internal.Input
 )
 
 func init() {
-	InputText = &internal.Input{} // Initialize the pointer
+	InputText = &internal.Input{}
 
 	InputPane.
 		SetWrap(true).

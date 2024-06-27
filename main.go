@@ -45,30 +45,12 @@ func main() {
 		}
 	}()
 
-	// Group 2: historyPane and promptPane in a vertical layout
-	group2 := tview.NewFlex().SetDirection(tview.FlexRow).
-		AddItem(historyPane, 0, 1, true).
-		AddItem(promptPane, 0, 1, true)
-
-	// Group 4: inputPane and modelsPane in a horizontal layout
-	group4 := tview.NewFlex().SetDirection(tview.FlexColumn).
-		AddItem(inputPane, 0, 1, true).
-		AddItem(modelsPane, 0, 1, true) // Set focusable to true
-
-	// Group 3: Group 4 and outputPane in a vertical layout
-	group3 := tview.NewFlex().SetDirection(tview.FlexRow).
-		AddItem(group4, 0, 1, true).
-		AddItem(outputPane, 0, 2, true)
-
-	// Group 1: Group 2 and Group 3 in a horizontal layout
-	group1 := tview.NewFlex().SetDirection(tview.FlexColumn).
-		AddItem(group2, 0, 1, true).
-		AddItem(group3, 0, 2, true)
-
-	// Main Flex: Group 1 and keybindingsPane in a vertical layout
-	mainFlex := tview.NewFlex().SetDirection(tview.FlexRow).
-		AddItem(group1, 0, 4, true).
-		AddItem(keybindingsPane, 3, 1, true)
+	// Create layout groups
+	group2 := panes.CreateGroup2(historyPane, promptPane)
+	group4 := panes.CreateGroup4(inputPane, modelsPane)
+	group3 := panes.CreateGroup3(group4, outputPane)
+	group1 := panes.CreateGroup1(group2, group3)
+	mainFlex := panes.CreateMainFlex(group1, keybindingsPane)
 
 	// Set up global keybindings to focus on each pane
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
@@ -97,6 +79,9 @@ func main() {
 		}
 		return event
 	})
+
+	// Set the default focus to inputPane
+	app.SetFocus(inputPane)
 
 	// Set up the application root
 	err := app.SetRoot(mainFlex, true).Run()
