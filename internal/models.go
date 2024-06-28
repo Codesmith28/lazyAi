@@ -8,23 +8,27 @@ type HistoryItem struct {
 }
 
 type History struct {
-	History []HistoryItem
+	HistoryList []HistoryItem
 }
 
 type Prompt struct {
-	Prompt string
+	PromptString string
 }
 
 type Input struct {
-	Input string
+	InputString string
+}
+
+type Model struct {
+	SelectedModel string
 }
 
 type FormattedInput struct {
-	Input  string
-	Model  string
-	Prompt string
+	InputString  string
+	ModelName    string
+	PromptString string
 }
 
 type Output struct {
-	Output string
+	OutputString string
 }
