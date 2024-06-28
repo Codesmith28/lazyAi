@@ -1,12 +1,15 @@
 package main
 
 import (
+	"fmt"
+	"sync"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
 	"github.com/Codesmith28/cheatScript/internal/clipboard"
+	core "github.com/Codesmith28/cheatScript/internal/queue"
 	"github.com/Codesmith28/cheatScript/panes"
 )
 
@@ -21,6 +24,8 @@ var (
 	modelList = panes.ModelList
 )
 
+var once sync.Once
+
 func checkNilErr(err error) {
 	if err != nil {
 		panic(err)
@@ -29,6 +34,8 @@ func checkNilErr(err error) {
 
 func main() {
 	app := tview.NewApplication()
+
+	clipboard := clipboard.NewClipboard()
 	go clipboard.StartMonitoring()
 	clipboard.Clear()
 
@@ -42,12 +49,52 @@ func main() {
 		AddItem(inputPane, 0, 1, false).
 		AddItem(modelsPane, 0, 1, true) // Set focusable to true
 
+	// intialize the queue
+
+	// calculate how much time it takes to connect to the queue
+
+	queue := core.NewQueue()
+	var err error = queue.Connect()
+
+	if err != nil {
+		checkNilErr(err)
+	}
+
 	go func() {
 		for {
-			text, _ := clipboard.GetClipboardText()
+			text, err := clipboard.GetClipboardText()
+
+			if err != nil {
+				fmt.Println("Error getting clipboard text:", err)
+				checkNilErr(err)
+			}
+
 			app.QueueUpdateDraw(func() {
 				inputPane.SetText("Prompt: " + text)
 			})
+
+			err = queue.Publish(text)
+
+			if err != nil {
+				fmt.Println("Error publishing message:", err)
+				checkNilErr(err)
+			}
+
+			once.Do(func() {
+				go queue.Consume(clipboard, func(msg string) {
+					app.QueueUpdateDraw(func() {
+						outputPane.SetText(msg)
+					})
+
+					clipboard.LastText = msg
+					err := clipboard.SetClipboardText(msg)
+
+					if err != nil {
+						checkNilErr(err)
+					}
+				})
+			})
+
 			time.Sleep(1 * time.Second)
 		}
 	}()
@@ -93,6 +140,6 @@ func main() {
 	app.SetFocus(inputPane)
 
 	// Set up the application root
-	err := app.SetRoot(mainFlex, true).Run()
+	err = app.SetRoot(mainFlex, true).Run()
 	checkNilErr(err)
 }

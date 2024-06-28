@@ -1,37 +1,62 @@
 package clipboard
 
 import (
+	"strings"
+	"sync"
 	"time"
 
 	"github.com/atotto/clipboard"
 )
 
-var prompt = make(chan string)
-var lastText string
+type Clipboard struct {
+	Prompt   chan string
+	LastText string
+	Mu       sync.RWMutex
+}
+
+// create a new clipboard object
+func NewClipboard() *Clipboard {
+	return &Clipboard{
+		Prompt:   make(chan string),
+		LastText: "",
+	}
+}
 
 // start watching the clipboard for changes
-func StartMonitoring() {
+func (c *Clipboard) StartMonitoring() {
 	for {
 		text, err := clipboard.ReadAll()
 
-		if err != nil {
+		if err != nil || strings.TrimSpace(text) == "" {
 			continue // might need to find a better way to handle this
 		}
 
-		if text != lastText {
-			prompt <- text
-			lastText = text
+		c.Mu.Lock()
+
+		if text != c.LastText {
+			c.LastText = text
+			c.Prompt <- text
 		}
+
+		c.Mu.Unlock()
 
 		time.Sleep(1 * time.Second)
 	}
 }
 
 // return the current clipboard text
-func GetClipboardText() (string, error) {
-	return <-prompt, nil
+func (c *Clipboard) GetClipboardText() (string, error) {
+	return <-c.Prompt, nil
 }
 
-func Clear() error {
+// clear the contents of the clipboard
+func (c *Clipboard) Clear() error {
 	return clipboard.WriteAll(" ")
+}
+
+// set the clipboard text to the provided text
+func (c *Clipboard) SetClipboardText(text string) error {
+	c.Mu.Lock()
+	defer c.Mu.Unlock()
+	return clipboard.WriteAll(text)
 }
