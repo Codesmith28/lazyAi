@@ -17,6 +17,8 @@ var (
 	ModelList  = panes.ModelList
 	PromptText = panes.PromptText
 	InputText  = panes.InputText
+	OutputText = panes.OutputText
+	Selected   = panes.Selected
 )
 
 func checkNilErr(err error) {

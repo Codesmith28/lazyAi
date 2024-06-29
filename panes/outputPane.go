@@ -3,11 +3,22 @@ package panes
 import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+
+	"github.com/Codesmith28/cheatScript/internal"
 )
 
-var OutputPane = tview.NewTextView()
+var (
+	OutputPane = tview.NewTextView()
+	OutputText = &internal.Output{}
+)
 
 func init() {
+	OutputText = &internal.Output{
+		OutputString: "",
+	}
+
+	OutputPane.SetText(OutputText.OutputString)
+
 	OutputPane.
 		SetWrap(true).
 		SetScrollable(true).

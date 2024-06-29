@@ -2,7 +2,7 @@ package panes
 
 import "github.com/rivo/tview"
 
-func CreateGroup2(historyPane *tview.Box, promptPane *tview.TextArea) *tview.Flex {
+func CreateGroup2(historyPane *tview.List, promptPane *tview.TextArea) *tview.Flex {
 	return tview.NewFlex().SetDirection(tview.FlexRow).
 		AddItem(historyPane, 0, 1, true).
 		AddItem(promptPane, 0, 1, true)
