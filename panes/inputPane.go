@@ -90,7 +90,7 @@ func StartClipboardMonitoring(app *tview.Application, outputPane *tview.TextView
 						OutputPane.SetText(msg)
 					})
 
-					clipboard.LastText = msg
+					// clipboard.LastText = msg
 					// err := clipboard.SetClipboardText(msg)
 
 					// if err != nil {
