@@ -27,10 +27,8 @@ func init() {
 			switch event.Key() {
 			case tcell.KeyRune:
 				switch event.Rune() {
-				case 's':
-					saveCurrentState()
-				case 'o':
-					createNewState()
+				case 'd':
+					deleteHistoryItem()
 				}
 			}
 			return event
@@ -84,6 +82,19 @@ func loadState(item history.HistoryItem) {
 	Selected.SelectedModel = item.Query.SelectedModel
 	OutputText.OutputString = item.Output
 	updatePanes(item.Query.SelectedModel)
+}
+
+// Delete the selected history item from the history list
+func deleteHistoryItem() {
+	selectedIndex := HistoryPane.GetCurrentItem()
+	History.HistoryList = append(
+		History.HistoryList[:selectedIndex],
+		History.HistoryList[selectedIndex+1:]...)
+	err := history.SaveHistory(History)
+	if err != nil {
+		panic(err)
+	}
+	updateHistoryPane()
 }
 
 // Update all panes with the current state.

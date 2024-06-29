@@ -31,6 +31,10 @@ func SetupGlobalKeybindings(app *tview.Application) {
 			case '?':
 				app.SetFocus(KeybindingsPane)
 				return nil
+			case 's':
+				saveCurrentState()
+			case 'o':
+				createNewState()
 			}
 		}
 		return event
