@@ -50,10 +50,7 @@ func UpdateInputPane() {
 
 var once sync.Once
 
-func StartClipboardMonitoring(app *tview.Application, outputPane *tview.TextView) {
-
-	clipboard.Clear()
-	clipboard := clipboard.NewClipboard()
+func StartClipboardMonitoring(app *tview.Application, clipboard *clipboard.Clipboard, OutputPane *tview.TextView) {
 
 	go clipboard.StartMonitoring()
 
@@ -64,6 +61,8 @@ func StartClipboardMonitoring(app *tview.Application, outputPane *tview.TextView
 	if err != nil {
 		panic(err)
 	}
+
+	consumerQueue := core.NewQueue()
 
 	go func() {
 		for {
@@ -85,19 +84,17 @@ func StartClipboardMonitoring(app *tview.Application, outputPane *tview.TextView
 			}
 
 			once.Do(func() {
-				go queue.Consume(clipboard, func(msg string) {
-					app.QueueUpdateDraw(func() {
-						OutputPane.SetText(msg)
-					})
-
-					// clipboard.LastText = msg
-					// err := clipboard.SetClipboardText(msg)
-
-					// if err != nil {
-					// 	panic(err)
-					// } //this sometimes giving *clipboard is not open in thread error*
-				})
+				go consumerQueue.Consume(clipboard)
 			})
+
+			message, _ := consumerQueue.GetMessages()
+
+			app.QueueUpdateDraw(func() {
+				OutputPane.SetText(message)
+			})
+
+			clipboard.LastText = message
+			clipboard.SetClipboardText(message)
 
 			time.Sleep(1 * time.Second)
 		}

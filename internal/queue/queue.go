@@ -12,11 +12,15 @@ import (
 type Queue struct {
 	conn        *amqp.Connection
 	isConnected bool
+	Message     chan string
 }
 
 // NewQueue creates a new Queue struct
 func NewQueue() *Queue {
-	return &Queue{}
+	return &Queue{
+		isConnected: false,
+		Message:     make(chan string),
+	}
 }
 
 // Connect connects to the RabbitMQ server
@@ -80,7 +84,7 @@ func (q *Queue) Publish(message string) error {
 	return nil
 }
 
-func (q *Queue) Consume(clipboard *clipboard.Clipboard, cb func(string)) {
+func (q *Queue) Consume(clipboard *clipboard.Clipboard) {
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	if err != nil {
 		panic(err)
@@ -121,11 +125,15 @@ func (q *Queue) Consume(clipboard *clipboard.Clipboard, cb func(string)) {
 				continue
 			}
 
-			cb(content)
+			q.Message <- content
 
 			time.Sleep(2 * time.Second)
 		}
 	}()
 
 	<-forever
+}
+
+func (q *Queue) GetMessages() (string, error) {
+	return <-q.Message, nil
 }
