@@ -52,10 +52,10 @@ var once sync.Once
 
 func StartClipboardMonitoring(app *tview.Application, outputPane *tview.TextView) {
 
+	clipboard.Clear()
 	clipboard := clipboard.NewClipboard()
 
 	go clipboard.StartMonitoring()
-	clipboard.Clear()
 
 	// intialize the queue
 	queue := core.NewQueue()
@@ -67,7 +67,12 @@ func StartClipboardMonitoring(app *tview.Application, outputPane *tview.TextView
 
 	go func() {
 		for {
-			text, _ := clipboard.GetClipboardText()
+			text, err := clipboard.GetClipboardText()
+
+			if err != nil {
+				panic(err)
+			}
+
 			app.QueueUpdateDraw(func() {
 				InputText.InputString = text
 				UpdateInputPane()
@@ -85,12 +90,12 @@ func StartClipboardMonitoring(app *tview.Application, outputPane *tview.TextView
 						OutputPane.SetText(msg)
 					})
 
-					// clipboard.LastText = msg
+					clipboard.LastText = msg
 					// err := clipboard.SetClipboardText(msg)
 
 					// if err != nil {
 					// 	panic(err)
-					// } this sometimes giving *clipboard is not open in thread error*
+					// } //this sometimes giving *clipboard is not open in thread error*
 				})
 			})
 

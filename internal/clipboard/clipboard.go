@@ -3,7 +3,6 @@ package clipboard
 import (
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/atotto/clipboard"
 )
@@ -19,6 +18,7 @@ func NewClipboard() *Clipboard {
 	return &Clipboard{
 		Prompt:   make(chan string),
 		LastText: "",
+		Mu:       sync.RWMutex{},
 	}
 }
 
@@ -39,8 +39,6 @@ func (c *Clipboard) StartMonitoring() {
 		}
 
 		c.Mu.Unlock()
-
-		time.Sleep(1 * time.Second)
 	}
 }
 
@@ -50,8 +48,9 @@ func (c *Clipboard) GetClipboardText() (string, error) {
 }
 
 // clear the contents of the clipboard
-func (c *Clipboard) Clear() error {
-	return clipboard.WriteAll(" ")
+func Clear() error {
+	clipboard.WriteAll(" ")
+	return nil
 }
 
 // set the clipboard text to the provided text
