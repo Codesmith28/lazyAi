@@ -1,8 +1,7 @@
 package panes
 
 import (
-	"fmt"
-
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
 	"github.com/Codesmith28/cheatScript/internal"
@@ -21,10 +20,10 @@ func init() {
 
 	// Add models to the list
 	ModelList.AddItem("Model 1", "", 0, func() {
-		selectModel("Model 1")
+		SelectModel("Model 1")
 	})
 	ModelList.AddItem("Model 2", "", 0, func() {
-		selectModel("Model 2")
+		SelectModel("Model 2")
 	})
 
 	// Enable mouse support
@@ -33,7 +32,7 @@ func init() {
 		case tcell.KeyEnter:
 			currentItem := ModelList.GetCurrentItem()
 			mainText, _ := ModelList.GetItemText(currentItem)
-			selectModel(mainText)
+			SelectModel(mainText)
 		}
 		return event
 	})
