@@ -51,7 +51,6 @@ func UpdateInputPane() {
 var once sync.Once
 
 func StartClipboardMonitoring(app *tview.Application, outputPane *tview.TextView) {
-
 	clipboard.Clear()
 	clipboard := clipboard.NewClipboard()
 
@@ -68,7 +67,6 @@ func StartClipboardMonitoring(app *tview.Application, outputPane *tview.TextView
 	go func() {
 		for {
 			text, err := clipboard.GetClipboardText()
-
 			if err != nil {
 				panic(err)
 			}
@@ -79,7 +77,6 @@ func StartClipboardMonitoring(app *tview.Application, outputPane *tview.TextView
 			})
 
 			err = queue.Publish(text)
-
 			if err != nil {
 				panic(err)
 			}
