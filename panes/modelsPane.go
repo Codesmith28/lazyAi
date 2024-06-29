@@ -9,9 +9,8 @@ import (
 )
 
 var (
-	// ModelsPane is a flex layout containing the title and list of models.
 	ModelsPane = tview.NewFlex()
-	ModelList  = tview.NewList() // Export ModelList to access it
+	ModelList  = tview.NewList()
 	Selected   *internal.Model
 )
 

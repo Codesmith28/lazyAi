@@ -1,10 +1,15 @@
 package internal
 
+type Query struct {
+	InputString   string
+	PromptString  string
+	SelectedModel string
+}
+
 type HistoryItem struct {
-	Query string
-	Date  string
-	Model string
-	SrNo  int
+	Query  Query
+	Output string
+	Date   string
 }
 
 type History struct {
@@ -21,12 +26,6 @@ type Input struct {
 
 type Model struct {
 	SelectedModel string
-}
-
-type FormattedInput struct {
-	InputString  string
-	ModelName    string
-	PromptString string
 }
 
 type Output struct {
