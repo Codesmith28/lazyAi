@@ -13,18 +13,25 @@ var (
 	Selected   *internal.Model
 )
 
+var availableModels = map[string]*internal.Model{
+	"Gemini Flash":   {SelectedModel: "gemini-1.5-flash"},
+	"Gemini Pro 1.0": {SelectedModel: "gemini-1.0-pro"},
+}
+
 func init() {
 	// Configure the model list
 	ModelList.ShowSecondaryText(false).SetTitle("Models").SetBorder(true)
 	Selected = &internal.Model{}
 
+	SelectModel(availableModels["Gemini Flash"].SelectedModel)
+
 	// Add models to the list
-	ModelList.AddItem("Model 1", "", 0, func() {
-		SelectModel("Model 1")
-	})
-	ModelList.AddItem("Model 2", "", 0, func() {
-		SelectModel("Model 2")
-	})
+	for key, model := range availableModels {
+		currentModel := model
+		ModelList.AddItem(key, "", 0, func() {
+			SelectModel(currentModel.SelectedModel)
+		})
+	}
 
 	// Enable mouse support
 	ModelList.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
@@ -32,7 +39,7 @@ func init() {
 		case tcell.KeyEnter:
 			currentItem := ModelList.GetCurrentItem()
 			mainText, _ := ModelList.GetItemText(currentItem)
-			SelectModel(mainText)
+			SelectModel(availableModels[mainText].SelectedModel)
 		}
 		return event
 	})

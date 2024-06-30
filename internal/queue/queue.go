@@ -1,9 +1,11 @@
 package core
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/Codesmith28/cheatScript/api"
+	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/Codesmith28/cheatScript/internal/clipboard"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -19,7 +21,7 @@ type Queue struct {
 func NewQueue() *Queue {
 	return &Queue{
 		isConnected: false,
-		Message:     make(chan string),
+		Message:     make(chan string, 5),
 	}
 }
 
@@ -72,7 +74,7 @@ func (q *Queue) Publish(message string) error {
 		false,
 		false,
 		amqp.Publishing{
-			ContentType: "text/plain",
+			ContentType: "application/json",
 			Body:        []byte(message),
 		},
 	)
@@ -118,7 +120,14 @@ func (q *Queue) Consume(clipboard *clipboard.Clipboard) {
 		for d := range msgs {
 
 			clipboard.Mu.Lock()
-			content, _ := api.SendPrompt(string(d.Body))
+			var prompt internal.Prompt
+			err := json.Unmarshal(d.Body, &prompt)
+			if err != nil {
+				panic(err)
+			}
+
+			// Now you can use prompt.PromptString and prompt.Model
+			content, _ := api.SendPrompt(prompt.PromptString, prompt.Model)
 			clipboard.Mu.Unlock()
 
 			if content == "" {

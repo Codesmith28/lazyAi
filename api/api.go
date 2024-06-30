@@ -9,7 +9,7 @@ import (
 	"google.golang.org/api/option"
 )
 
-func SendPrompt(prompt string) (string, error) {
+func SendPrompt(prompt string, modelName string) (string, error) {
 	ctx := context.Background()
 	err := godotenv.Load()
 
@@ -23,7 +23,7 @@ func SendPrompt(prompt string) (string, error) {
 	}
 	defer client.Close()
 
-	model := client.GenerativeModel("gemini-1.5-flash")
+	model := client.GenerativeModel(modelName)
 	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
 	if err != nil {
 		return "", err

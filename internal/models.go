@@ -18,6 +18,7 @@ type History struct {
 
 type Prompt struct {
 	PromptString string
+	Model        string
 }
 
 type Input struct {

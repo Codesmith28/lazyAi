@@ -16,7 +16,7 @@ type Clipboard struct {
 // create a new clipboard object
 func NewClipboard() *Clipboard {
 	return &Clipboard{
-		Prompt:   make(chan string),
+		Prompt:   make(chan string, 5),
 		LastText: "",
 		Mu:       sync.RWMutex{},
 	}

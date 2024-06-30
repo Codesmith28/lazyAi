@@ -1,6 +1,7 @@
 package panes
 
 import (
+	"encoding/json"
 	"sync"
 	"time"
 
@@ -73,7 +74,20 @@ func StartClipboardMonitoring(app *tview.Application, clipboard *clipboard.Clipb
 				UpdateInputPane()
 			})
 
-			err = queue.Publish(text)
+			prompt := &internal.Prompt{
+				PromptString: text,
+				Model:        Selected.SelectedModel,
+			}
+
+			promptBytes, err := json.Marshal(prompt)
+			if err != nil {
+				// handle error
+			}
+
+			promptJson := string(promptBytes)
+
+			// Now you can pass promptJson to Queue.Publish
+			err = queue.Publish(promptJson)
 
 			if err != nil {
 				panic(err)
