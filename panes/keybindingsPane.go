@@ -5,7 +5,18 @@ import (
 	"github.com/rivo/tview"
 )
 
-var KeybindingsPane = tview.NewBox().SetBorder(true).SetTitle(" Keybindings ")
+var KeybindingsPane *tview.TextView
+
+func init() {
+	KeybindingsPane = tview.NewTextView().
+		SetDynamicColors(true).
+		SetRegions(true).
+		SetWrap(true)
+
+	KeybindingsPane.SetText(
+		`M-1: Input | M-2: Models | M-3: Output | M-4: History | M-5: Prompt | M-?: Keybindings | M-S: Save current state | M-O: Create new state`,
+	)
+}
 
 // SetupGlobalKeybindings sets up global keybindings to focus on each pane.
 func SetupGlobalKeybindings(app *tview.Application) {
@@ -32,10 +43,12 @@ func SetupGlobalKeybindings(app *tview.Application) {
 				case '?':
 					app.SetFocus(KeybindingsPane)
 					return nil
-				case 's':
+				case 'S', 's':
 					saveCurrentState()
-				case 'o':
+					return nil
+				case 'O', 'o':
 					createNewState()
+					return nil
 				}
 			}
 		}

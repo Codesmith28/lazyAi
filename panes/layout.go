@@ -26,8 +26,8 @@ func CreateGroup1(group2, group3 *tview.Flex) *tview.Flex {
 		AddItem(group3, 0, 2, true)
 }
 
-func CreateMainFlex(group1 *tview.Flex, keybindingsPane *tview.Box) *tview.Flex {
+func CreateMainFlex(group1 *tview.Flex, keybindingsPane *tview.TextView) *tview.Flex {
 	return tview.NewFlex().SetDirection(tview.FlexRow).
-		AddItem(group1, 0, 4, true).
-		AddItem(keybindingsPane, 3, 1, true)
+		AddItem(group1, 0, 20, true).
+		AddItem(keybindingsPane, 1, 0, true)
 }
