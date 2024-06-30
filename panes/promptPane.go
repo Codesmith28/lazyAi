@@ -23,12 +23,6 @@ func init() {
 		SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 			if event.Key() == tcell.KeyRune && event.Rune() == '5' {
 				return nil
-			} else if event.Key() == tcell.KeyRune && event.Rune() == 's' {
-				return nil
-			} else if event.Key() == tcell.KeyRune && event.Rune() == 'o' {
-				return nil
-			} else if event.Key() == tcell.KeyRune && event.Rune() == '?' {
-				return nil
 			}
 			return event
 		})

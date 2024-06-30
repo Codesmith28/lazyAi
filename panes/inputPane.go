@@ -34,11 +34,6 @@ func init() {
 			case tcell.KeyDown:
 				currRow, _ := InputPane.GetScrollOffset()
 				InputPane.ScrollTo(currRow+1, 0)
-			case tcell.KeyRune:
-				switch event.Rune() {
-				case '1', '2', '3', '4', '5', '?':
-					return nil
-				}
 			}
 			return event
 		})
@@ -47,7 +42,6 @@ func init() {
 var once sync.Once
 
 func StartClipboardMonitoring(app *tview.Application, outputPane *tview.TextView) {
-
 	clipboard.Clear()
 	clipboard := clipboard.NewClipboard()
 
@@ -64,7 +58,6 @@ func StartClipboardMonitoring(app *tview.Application, outputPane *tview.TextView
 	go func() {
 		for {
 			text, err := clipboard.GetClipboardText()
-
 			if err != nil {
 				panic(err)
 			}
@@ -75,7 +68,6 @@ func StartClipboardMonitoring(app *tview.Application, outputPane *tview.TextView
 			})
 
 			err = queue.Publish(text)
-
 			if err != nil {
 				panic(err)
 			}
