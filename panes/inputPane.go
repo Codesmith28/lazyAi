@@ -44,10 +44,6 @@ func init() {
 		})
 }
 
-func UpdateInputPane() {
-	InputPane.SetText(InputText.InputString)
-}
-
 var once sync.Once
 
 func StartClipboardMonitoring(app *tview.Application, clipboard *clipboard.Clipboard, OutputPane *tview.TextView) {
