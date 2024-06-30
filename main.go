@@ -32,8 +32,8 @@ func main() {
 	panes.StartClipboardMonitoring(app, OutputPane)
 
 	// Create layout groups
-	group2 := panes.CreateGroup2(HistoryPane, PromptPane)
-	group4 := panes.CreateGroup4(InputPane, ModelsPane)
+	group2 := panes.CreateGroup2(HistoryPane, ModelsPane)
+	group4 := panes.CreateGroup4(InputPane, PromptPane)
 	group3 := panes.CreateGroup3(group4, OutputPane)
 	group1 := panes.CreateGroup1(group2, group3)
 	mainFlex := panes.CreateMainFlex(group1, KeybindingsPane)

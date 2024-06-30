@@ -14,7 +14,7 @@ func init() {
 		SetWrap(true)
 
 	KeybindingsPane.SetText(
-		`M-1: Input | M-2: Models | M-3: Output | M-4: History | M-5: Prompt | M-?: Keybindings | M-S: Save current state | M-O: Create new state`,
+		`M-1: Prompt | M-2: Input | M-3: Output | M-4: History | M-5: Models | M-S: Save current state | M-O: Create new state`,
 	)
 }
 
@@ -26,10 +26,10 @@ func SetupGlobalKeybindings(app *tview.Application) {
 			case tcell.KeyRune:
 				switch event.Rune() {
 				case '1':
-					app.SetFocus(InputPane)
+					app.SetFocus(PromptPane)
 					return nil
 				case '2':
-					app.SetFocus(ModelsPane)
+					app.SetFocus(InputPane)
 					return nil
 				case '3':
 					app.SetFocus(OutputPane)
@@ -38,10 +38,7 @@ func SetupGlobalKeybindings(app *tview.Application) {
 					app.SetFocus(HistoryPane)
 					return nil
 				case '5':
-					app.SetFocus(PromptPane)
-					return nil
-				case '?':
-					app.SetFocus(KeybindingsPane)
+					app.SetFocus(ModelsPane)
 					return nil
 				case 'S', 's':
 					saveCurrentState()
