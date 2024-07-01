@@ -21,7 +21,7 @@ func init() {
 			loadState(item)
 		}).
 		ShowSecondaryText(false).
-		SetTitle("History").
+		SetTitle(" History ").
 		SetBorder(true).
 		SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 			switch event.Key() {
