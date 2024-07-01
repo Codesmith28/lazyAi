@@ -29,7 +29,7 @@ func checkNilErr(err error) {
 
 func main() {
 	app := tview.NewApplication().EnableMouse(true)
-	panes.StartClipboardMonitoring(app, OutputPane)
+	panes.StartClipboardMonitoring(app)
 
 	// Create layout groups
 	group2 := panes.CreateGroup2(HistoryPane, ModelsPane)
