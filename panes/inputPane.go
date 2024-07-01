@@ -3,7 +3,6 @@ package panes
 import (
 	"encoding/json"
 	"sync"
-	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -35,11 +34,6 @@ func init() {
 			case tcell.KeyDown:
 				currRow, _ := InputPane.GetScrollOffset()
 				InputPane.ScrollTo(currRow+1, 0)
-			case tcell.KeyRune:
-				switch event.Rune() {
-				case '1', '2', '3', '4', '5', '?':
-					return nil
-				}
 			}
 			return event
 		})
@@ -47,11 +41,14 @@ func init() {
 
 var once sync.Once
 
-func StartClipboardMonitoring(app *tview.Application, clipboard *clipboard.Clipboard, OutputPane *tview.TextView) {
+func StartClipboardMonitoring(app *tview.Application) {
+	clipboard.Clear()
+	clipboard := clipboard.NewClipboard()
+	var lastPublishedText string
 
 	go clipboard.StartMonitoring()
 
-	// intialize the queue
+	// initialize the queue
 	queue := core.NewQueue()
 	var err error = queue.Connect()
 
@@ -59,54 +56,43 @@ func StartClipboardMonitoring(app *tview.Application, clipboard *clipboard.Clipb
 		panic(err)
 	}
 
-	consumerQueue := core.NewQueue()
-
 	go func() {
 		for {
 			text, err := clipboard.GetClipboardText()
-
 			if err != nil {
 				panic(err)
 			}
 
-			app.QueueUpdateDraw(func() {
-				InputText.InputString = text
-				UpdateInputPane()
-			})
+			if text != lastPublishedText {
+				app.QueueUpdateDraw(func() {
+					InputText.InputString = text
+					UpdateInputPane()
+				})
 
-			prompt := &internal.Prompt{
-				PromptString: text,
-				Model:        Selected.SelectedModel,
+				prompt := &internal.Prompt{
+					PromptString: text,
+					Model:        Selected.SelectedModel,
+				}
+
+				promptBytes, err := json.Marshal(prompt)
+				if err != nil {
+					panic(err)
+				}
+
+				promptJson := string(promptBytes)
+
+				err = queue.Publish(promptJson)
+
+				if err != nil {
+					panic(err)
+				}
+
+				lastPublishedText = text
+
+				once.Do(func() {
+					StartOutputMonitoring(app, clipboard)
+				})
 			}
-
-			promptBytes, err := json.Marshal(prompt)
-			if err != nil {
-				// handle error
-			}
-
-			promptJson := string(promptBytes)
-
-			// Now you can pass promptJson to Queue.Publish
-			err = queue.Publish(promptJson)
-
-			if err != nil {
-				panic(err)
-			}
-
-			once.Do(func() {
-				go consumerQueue.Consume(clipboard)
-			})
-
-			message, _ := consumerQueue.GetMessages()
-
-			app.QueueUpdateDraw(func() {
-				OutputPane.SetText(message)
-			})
-
-			clipboard.LastText = message
-			clipboard.SetClipboardText(message)
-
-			time.Sleep(1 * time.Second)
 		}
 	}()
 }

@@ -14,5 +14,4 @@ func UpdatePromptPane() {
 
 func SelectModel(model string) {
 	Selected.SelectedModel = model
-	// fmt.Printf("Selected Model: %s\n", model)
 }

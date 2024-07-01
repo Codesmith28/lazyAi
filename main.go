@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/rivo/tview"
 
-	"github.com/Codesmith28/cheatScript/internal/clipboard"
 	"github.com/Codesmith28/cheatScript/panes"
 )
 
@@ -31,13 +30,11 @@ func checkNilErr(err error) {
 func main() {
 	app := tview.NewApplication().EnableMouse(true)
 
-	clipboard.Clear()
-	clipboard := clipboard.NewClipboard()
-	panes.StartClipboardMonitoring(app, clipboard, OutputPane)
+	panes.StartClipboardMonitoring(app)
 
 	// Create layout groups
-	group2 := panes.CreateGroup2(HistoryPane, PromptPane)
-	group4 := panes.CreateGroup4(InputPane, ModelsPane)
+	group2 := panes.CreateGroup2(HistoryPane, ModelsPane)
+	group4 := panes.CreateGroup4(InputPane, PromptPane)
 	group3 := panes.CreateGroup3(group4, OutputPane)
 	group1 := panes.CreateGroup1(group2, group3)
 	mainFlex := panes.CreateMainFlex(group1, KeybindingsPane)

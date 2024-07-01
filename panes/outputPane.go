@@ -5,6 +5,8 @@ import (
 	"github.com/rivo/tview"
 
 	"github.com/Codesmith28/cheatScript/internal"
+	"github.com/Codesmith28/cheatScript/internal/clipboard"
+	core "github.com/Codesmith28/cheatScript/internal/queue"
 )
 
 var (
@@ -36,4 +38,25 @@ func init() {
 			}
 			return event
 		})
+}
+
+func StartOutputMonitoring(app *tview.Application, clipboard *clipboard.Clipboard) {
+
+	consumerQueue := core.NewQueue()
+	consumerQueue.Consume(clipboard)
+
+	go func() {
+		for {
+			message, _ := consumerQueue.GetMessages()
+
+			app.QueueUpdateDraw(func() {
+				OutputPane.SetText(message)
+			})
+
+			clipboard.Mu.Lock()
+			clipboard.LastText = message
+			clipboard.SetClipboardText(message)
+			clipboard.Mu.Unlock()
+		}
+	}()
 }

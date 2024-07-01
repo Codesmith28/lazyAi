@@ -2,7 +2,6 @@ package core
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/Codesmith28/cheatScript/api"
 	"github.com/Codesmith28/cheatScript/internal"
@@ -21,7 +20,7 @@ type Queue struct {
 func NewQueue() *Queue {
 	return &Queue{
 		isConnected: false,
-		Message:     make(chan string, 5),
+		Message:     make(chan string),
 	}
 }
 
@@ -98,49 +97,36 @@ func (q *Queue) Consume(clipboard *clipboard.Clipboard) {
 		panic(err)
 	}
 
-	defer ch.Close()
-
-	msgs, err := ch.Consume(
-		"Prompt",
-		"",
-		true,
-		false,
-		false,
-		false,
-		nil,
-	)
-
-	if err != nil {
-		panic(err)
-	}
-
-	forever := make(chan string)
-
 	go func() {
-		for d := range msgs {
+		for {
+			msgs, err := ch.Consume(
+				"Prompt",
+				"",
+				true,
+				false,
+				false,
+				false,
+				nil,
+			)
 
-			clipboard.Mu.Lock()
-			var prompt internal.Prompt
-			err := json.Unmarshal(d.Body, &prompt)
 			if err != nil {
 				panic(err)
 			}
 
-			// Now you can use prompt.PromptString and prompt.Model
-			content, _ := api.SendPrompt(prompt.PromptString, prompt.Model)
-			clipboard.Mu.Unlock()
+			for d := range msgs {
+				var prompt internal.Prompt
+				err := json.Unmarshal(d.Body, &prompt)
+				if err != nil {
+					panic(err)
+				}
 
-			if content == "" {
-				continue
+				clipboard.Mu.Lock()
+				content, _ := api.SendPrompt(prompt.PromptString, prompt.Model)
+				clipboard.Mu.Unlock()
+				q.Message <- content
 			}
-
-			q.Message <- content
-
-			time.Sleep(2 * time.Second)
 		}
 	}()
-
-	<-forever
 }
 
 func (q *Queue) GetMessages() (string, error) {

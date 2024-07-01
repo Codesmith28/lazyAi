@@ -16,7 +16,7 @@ type Clipboard struct {
 // create a new clipboard object
 func NewClipboard() *Clipboard {
 	return &Clipboard{
-		Prompt:   make(chan string, 5),
+		Prompt:   make(chan string),
 		LastText: "",
 		Mu:       sync.RWMutex{},
 	}
@@ -31,14 +31,10 @@ func (c *Clipboard) StartMonitoring() {
 			continue // might need to find a better way to handle this
 		}
 
-		c.Mu.Lock()
-
 		if text != c.LastText {
 			c.LastText = text
 			c.Prompt <- text
 		}
-
-		c.Mu.Unlock()
 	}
 }
 
@@ -55,7 +51,5 @@ func Clear() error {
 
 // set the clipboard text to the provided text
 func (c *Clipboard) SetClipboardText(text string) error {
-	c.Mu.Lock()
-	defer c.Mu.Unlock()
 	return clipboard.WriteAll(text)
 }
