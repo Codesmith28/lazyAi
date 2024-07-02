@@ -20,7 +20,7 @@ var availableModels = map[string]*internal.Model{
 
 func init() {
 	// Configure the model list
-	ModelList.ShowSecondaryText(false).SetTitle("Models").SetBorder(true)
+	ModelList.ShowSecondaryText(false).SetTitle(" Models ").SetBorder(true)
 	Selected = &internal.Model{}
 
 	SelectModel(availableModels["Gemini Flash"].SelectedModel)
