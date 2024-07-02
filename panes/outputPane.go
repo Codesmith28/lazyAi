@@ -1,6 +1,8 @@
 package panes
 
 import (
+	"fmt"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
@@ -54,8 +56,12 @@ func StartOutputMonitoring(app *tview.Application, clipboard *clipboard.Clipboar
 			})
 
 			clipboard.Mu.Lock()
-			clipboard.LastText = message
-			clipboard.SetClipboardText(message)
+
+			clipboard.OutputText = message
+			err := clipboard.SetClipboardText(message)
+			if err != nil {
+				fmt.Println("Error setting clipboard text: ", err)
+			}
 			clipboard.Mu.Unlock()
 		}
 	}()
