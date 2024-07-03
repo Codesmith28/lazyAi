@@ -65,6 +65,12 @@ func StartClipboardMonitoring(app *tview.Application) {
 					UpdateInputPane()
 				})
 
+				// promptString := PromptText.PromptString
+				// selectedModel := Selected.SelectedModel
+				//
+				// localQuery := querymaker.MakeQuery(promptString, selectedModel, text)
+				// promptBytes, err := json.Marshal(localQuery)
+
 				prompt := &internal.Prompt{
 					PromptString: text,
 					Model:        Selected.SelectedModel,

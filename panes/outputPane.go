@@ -43,7 +43,6 @@ func init() {
 }
 
 func StartOutputMonitoring(app *tview.Application, clipboard *clipboard.Clipboard) {
-
 	consumerQueue := core.NewQueue()
 	consumerQueue.Consume(clipboard)
 
@@ -52,6 +51,7 @@ func StartOutputMonitoring(app *tview.Application, clipboard *clipboard.Clipboar
 			message, _ := consumerQueue.GetMessages()
 
 			app.QueueUpdateDraw(func() {
+				OutputText.OutputString = message
 				OutputPane.SetText(message)
 			})
 
