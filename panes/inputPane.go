@@ -52,16 +52,12 @@ func StartClipboardMonitoring(app *tview.Application) {
 	queue := core.NewQueue()
 	var err error = queue.Connect()
 
-	if err != nil {
-		panic(err)
-	}
+	checkNilErr(err)
 
 	go func() {
 		for {
 			text, err := clipboard.GetClipboardText()
-			if err != nil {
-				panic(err)
-			}
+			checkNilErr(err)
 
 			if text != lastPublishedText {
 				app.QueueUpdateDraw(func() {
@@ -75,17 +71,12 @@ func StartClipboardMonitoring(app *tview.Application) {
 				}
 
 				promptBytes, err := json.Marshal(prompt)
-				if err != nil {
-					panic(err)
-				}
+				checkNilErr(err)
 
 				promptJson := string(promptBytes)
 
 				err = queue.Publish(promptJson)
-
-				if err != nil {
-					panic(err)
-				}
+				checkNilErr(err)
 
 				lastPublishedText = text
 

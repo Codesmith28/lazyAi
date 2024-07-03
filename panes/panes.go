@@ -1,5 +1,7 @@
 package panes
 
+import "log"
+
 func UpdateInputPane() {
 	InputPane.SetText(InputText.InputString)
 }
@@ -14,4 +16,10 @@ func UpdatePromptPane() {
 
 func SelectModel(model string) {
 	Selected.SelectedModel = model
+}
+
+func checkNilErr(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
 }
