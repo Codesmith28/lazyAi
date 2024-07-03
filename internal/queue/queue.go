@@ -2,11 +2,13 @@ package core
 
 import (
 	"encoding/json"
+	"log"
+
+	amqp "github.com/rabbitmq/amqp091-go"
 
 	"github.com/Codesmith28/cheatScript/api"
 	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/Codesmith28/cheatScript/internal/clipboard"
-	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 // Queue is a struct that holds the connection to the RabbitMQ server
@@ -31,9 +33,7 @@ func (q *Queue) Connect() error {
 	}
 
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
-	if err != nil {
-		return err
-	}
+	checkNilErr(err)
 
 	q.conn = conn
 	q.isConnected = true
@@ -47,9 +47,7 @@ func (q *Queue) Close() error {
 
 func (q *Queue) Publish(message string) error {
 	ch, err := q.conn.Channel()
-	if err != nil {
-		return err
-	}
+	checkNilErr(err)
 	defer ch.Close()
 
 	_, err = ch.QueueDeclare(
@@ -60,10 +58,7 @@ func (q *Queue) Publish(message string) error {
 		false,
 		nil,
 	)
-
-	if err != nil {
-		return err
-	}
+	checkNilErr(err)
 
 	// fmt.Println("Queue declared", queue)
 
@@ -77,25 +72,17 @@ func (q *Queue) Publish(message string) error {
 			Body:        []byte(message),
 		},
 	)
-
-	if err != nil {
-		return err
-	}
+	checkNilErr(err)
 
 	return nil
 }
 
 func (q *Queue) Consume(clipboard *clipboard.Clipboard) {
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
-	if err != nil {
-		panic(err)
-	}
+	checkNilErr(err)
 
 	ch, err := conn.Channel()
-
-	if err != nil {
-		panic(err)
-	}
+	checkNilErr(err)
 
 	go func() {
 		for {
@@ -108,17 +95,12 @@ func (q *Queue) Consume(clipboard *clipboard.Clipboard) {
 				false,
 				nil,
 			)
-
-			if err != nil {
-				panic(err)
-			}
+			checkNilErr(err)
 
 			for d := range msgs {
 				var prompt internal.Prompt
 				err := json.Unmarshal(d.Body, &prompt)
-				if err != nil {
-					panic(err)
-				}
+				checkNilErr(err)
 
 				clipboard.Mu.Lock()
 				content, _ := api.SendPrompt(prompt.PromptString, prompt.Model)
@@ -131,4 +113,10 @@ func (q *Queue) Consume(clipboard *clipboard.Clipboard) {
 
 func (q *Queue) GetMessages() (string, error) {
 	return <-q.Message, nil
+}
+
+func checkNilErr(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
 }
