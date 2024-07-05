@@ -9,6 +9,7 @@ import (
 
 	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/Codesmith28/cheatScript/internal/clipboard"
+	querymaker "github.com/Codesmith28/cheatScript/internal/queryMaker"
 	core "github.com/Codesmith28/cheatScript/internal/queue"
 )
 
@@ -65,18 +66,18 @@ func StartClipboardMonitoring(app *tview.Application) {
 					UpdateInputPane()
 				})
 
-				// promptString := PromptText.PromptString
-				// selectedModel := Selected.SelectedModel
+				promptString := PromptText.PromptString
+				selectedModel := Selected.SelectedModel
+
+				localQuery := querymaker.MakeQuery(promptString, selectedModel, text)
+				promptBytes, err := json.Marshal(localQuery)
+
+				// prompt := &internal.Prompt{
+				// 	PromptString: text,
+				// 	Model:        Selected.SelectedModel,
+				// }
 				//
-				// localQuery := querymaker.MakeQuery(promptString, selectedModel, text)
-				// promptBytes, err := json.Marshal(localQuery)
-
-				prompt := &internal.Prompt{
-					PromptString: text,
-					Model:        Selected.SelectedModel,
-				}
-
-				promptBytes, err := json.Marshal(prompt)
+				// promptBytes, err := json.Marshal(prompt)
 				checkNilErr(err)
 
 				promptJson := string(promptBytes)

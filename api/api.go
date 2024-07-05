@@ -9,25 +9,25 @@ import (
 	"google.golang.org/api/option"
 )
 
+func checkNilErr(err error) (string, error) {
+	if err != nil {
+		return "", err
+	}
+	return "", nil
+}
+
 func SendPrompt(prompt string, modelName string) (string, error) {
 	ctx := context.Background()
 	err := godotenv.Load()
-
-	if err != nil {
-		return "", err
-	}
+	checkNilErr(err)
 
 	client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("API_KEY")))
-	if err != nil {
-		return "", err
-	}
+	checkNilErr(err)
 	defer client.Close()
 
 	model := client.GenerativeModel(modelName)
 	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
-	if err != nil {
-		return "", err
-	}
+	checkNilErr(err)
 
 	if resp != nil && len(resp.Candidates) > 0 {
 		promptAns, _ := resp.Candidates[0].Content.Parts[0].(genai.Text)
