@@ -1,7 +1,6 @@
 package panes
 
 import (
-	"encoding/json"
 	"sync"
 
 	"github.com/gdamore/tcell/v2"
@@ -42,24 +41,17 @@ func init() {
 
 var once sync.Once
 
-func StartClipboardMonitoring(app *tview.Application) {
+func StartClipboardMonitoring(app *tview.Application, queue *core.Queue) {
 	clipboard.Clear()
 	clipboard := clipboard.NewClipboard()
 	var lastPublishedText string
 
 	go clipboard.StartMonitoring()
 
-	// initialize the queue
-	queue := core.NewQueue()
-	var err error = queue.Connect()
-
-	checkNilErr(err)
-
 	go func() {
 		for {
 			text, err := clipboard.GetClipboardText()
 			checkNilErr(err)
-
 			if text != lastPublishedText {
 				app.QueueUpdateDraw(func() {
 					InputText.InputString = text
@@ -69,26 +61,14 @@ func StartClipboardMonitoring(app *tview.Application) {
 				promptString := PromptText.PromptString
 				selectedModel := Selected.SelectedModel
 
-				localQuery := querymaker.MakeQuery(promptString, selectedModel, text)
-				promptBytes, err := json.Marshal(localQuery)
+				localQuery := querymaker.MakeQuery(text, promptString, selectedModel)
 
-				// prompt := &internal.Prompt{
-				// 	PromptString: text,
-				// 	Model:        Selected.SelectedModel,
-				// }
-				//
-				// promptBytes, err := json.Marshal(prompt)
+				err = queue.Publish(localQuery)
 				checkNilErr(err)
-
-				promptJson := string(promptBytes)
-
-				err = queue.Publish(promptJson)
-				checkNilErr(err)
-
 				lastPublishedText = text
 
 				once.Do(func() {
-					StartOutputMonitoring(app, clipboard)
+					StartOutputMonitoring(app, clipboard, queue)
 				})
 			}
 		}

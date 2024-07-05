@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"github.com/google/generative-ai-go/genai"
@@ -9,14 +10,13 @@ import (
 	"google.golang.org/api/option"
 )
 
-func checkNilErr(err error) (string, error) {
+func checkNilErr(err error) {
 	if err != nil {
-		return "", err
+		panic(err)
 	}
-	return "", nil
 }
 
-func SendPrompt(prompt string, modelName string) (string, error) {
+func SendPrompt(promptString string, modelName string, inputString string) (string, error) {
 	ctx := context.Background()
 	err := godotenv.Load()
 	checkNilErr(err)
@@ -26,13 +26,20 @@ func SendPrompt(prompt string, modelName string) (string, error) {
 	defer client.Close()
 
 	model := client.GenerativeModel(modelName)
-	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
+
+	// Restructure the prompt
+	fullPrompt := fmt.Sprintf("Context: %s\n\nQuestion: %s", promptString, inputString)
+
+	resp, err := model.GenerateContent(ctx, genai.Text(fullPrompt))
 	checkNilErr(err)
 
 	if resp != nil && len(resp.Candidates) > 0 {
-		promptAns, _ := resp.Candidates[0].Content.Parts[0].(genai.Text)
+		promptAns, ok := resp.Candidates[0].Content.Parts[0].(genai.Text)
+		if !ok {
+			return "", fmt.Errorf("unexpected response format")
+		}
 		return string(promptAns), nil
 	}
 
-	return "", nil
+	return "", fmt.Errorf("no response generated")
 }

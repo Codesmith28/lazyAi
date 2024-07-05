@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/rivo/tview"
 
+	core "github.com/Codesmith28/cheatScript/internal/queue"
 	"github.com/Codesmith28/cheatScript/panes"
 )
 
@@ -29,7 +30,13 @@ func checkNilErr(err error) {
 
 func main() {
 	app := tview.NewApplication().EnableMouse(true)
-	panes.StartClipboardMonitoring(app)
+
+	queue := core.NewQueue()
+	err := queue.Connect()
+	checkNilErr(err)
+	defer queue.Close()
+
+	panes.StartClipboardMonitoring(app, queue)
 
 	// Create layout groups
 	group2 := panes.CreateGroup2(HistoryPane, ModelsPane)
@@ -42,6 +49,6 @@ func main() {
 	panes.SetupGlobalKeybindings(app)
 
 	// Set up the application root
-	err := app.SetRoot(mainFlex, true).Run()
+	err = app.SetRoot(mainFlex, true).Run()
 	checkNilErr(err)
 }

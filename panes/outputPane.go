@@ -2,6 +2,7 @@ package panes
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -42,26 +43,31 @@ func init() {
 		})
 }
 
-func StartOutputMonitoring(app *tview.Application, clipboard *clipboard.Clipboard) {
-	consumerQueue := core.NewQueue()
-	consumerQueue.Consume(clipboard)
-
+func StartOutputMonitoring(
+	app *tview.Application,
+	clipboard *clipboard.Clipboard,
+	queue *core.Queue,
+) {
 	go func() {
 		for {
-			message, _ := consumerQueue.GetMessages()
+			// Consume the response
+			message, err := queue.Consume()
+			if err != nil {
+				fmt.Println("Error consuming message:", err)
+				time.Sleep(time.Second) // Add a delay to avoid tight loop on errors
+				continue
+			}
 
 			app.QueueUpdateDraw(func() {
-				OutputText.OutputString = message
-				OutputPane.SetText(message)
+				outputMessage := fmt.Sprintf(message)
+				OutputText.OutputString = outputMessage
+				OutputPane.SetText(outputMessage)
 			})
 
 			clipboard.Mu.Lock()
-
 			clipboard.OutputText = message
-			err := clipboard.SetClipboardText(message)
-			if err != nil {
-				fmt.Println("Error setting clipboard text: ", err)
-			}
+			err = clipboard.SetClipboardText(message)
+			checkNilErr(err)
 			clipboard.Mu.Unlock()
 		}
 	}()
