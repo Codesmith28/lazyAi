@@ -27,17 +27,13 @@ func (q *Queue) Connect() error {
 	if q.isConnected {
 		return nil
 	}
-
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	checkNilErr(err)
-
 	ch, err := conn.Channel()
 	checkNilErr(err)
-
 	q.conn = conn
 	q.channel = ch
 	q.isConnected = true
-
 	_, err = ch.QueueDeclare(
 		"Prompt",
 		false,
@@ -47,7 +43,6 @@ func (q *Queue) Connect() error {
 		nil,
 	)
 	checkNilErr(err)
-
 	messages, err := ch.Consume(
 		"Prompt",
 		"",
@@ -58,9 +53,7 @@ func (q *Queue) Connect() error {
 		nil,
 	)
 	checkNilErr(err)
-
 	q.messages = messages
-
 	return nil
 }
 
@@ -77,7 +70,6 @@ func (q *Queue) Close() error {
 func (q *Queue) Publish(query internal.Query) error {
 	queryBytes, err := json.Marshal(query)
 	checkNilErr(err)
-
 	err = q.channel.Publish(
 		"",
 		"Prompt",
@@ -89,7 +81,6 @@ func (q *Queue) Publish(query internal.Query) error {
 		},
 	)
 	checkNilErr(err)
-
 	return nil
 }
 
@@ -102,10 +93,8 @@ func (q *Queue) Consume() (string, error) {
 		var query internal.Query
 		err := json.Unmarshal(d.Body, &query)
 		checkNilErr(err)
-
 		content, err := api.SendPrompt(query.PromptString, query.SelectedModel, query.InputString)
 		checkNilErr(err)
-
 		return content, nil
 	}
 }
