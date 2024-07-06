@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/google/generative-ai-go/genai"
@@ -29,6 +30,7 @@ func SendPrompt(promptString string, modelName string, inputString string) (stri
 
 	// Restructure the prompt
 	fullPrompt := fmt.Sprintf("Context: %s\n\nQuestion: %s", promptString, inputString)
+	log.Printf("Full prompt: %s", fullPrompt)
 
 	resp, err := model.GenerateContent(ctx, genai.Text(fullPrompt))
 	checkNilErr(err)
