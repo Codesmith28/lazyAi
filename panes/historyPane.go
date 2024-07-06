@@ -38,9 +38,8 @@ func init() {
 // Load history from the JSON file and populate the history pane.
 func loadHistory() {
 	historyData, err := history.LoadHistory()
-	if err != nil {
-		panic(err)
-	}
+	checkNilErr(err)
+
 	History = historyData
 	updateHistoryPane()
 }
@@ -62,9 +61,7 @@ func saveCurrentState() {
 	}
 	output := OutputText.OutputString
 	err := history.AddHistoryItem(History, query, output)
-	if err != nil {
-		panic(err)
-	}
+	checkNilErr(err)
 	updateHistoryPane()
 }
 
@@ -91,9 +88,8 @@ func deleteHistoryItem() {
 		History.HistoryList[:selectedIndex],
 		History.HistoryList[selectedIndex+1:]...)
 	err := history.SaveHistory(History)
-	if err != nil {
-		panic(err)
-	}
+
+	checkNilErr(err)
 	updateHistoryPane()
 }
 
