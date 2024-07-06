@@ -61,10 +61,15 @@ func SaveHistory(history *History) error {
 
 // AddHistoryItem adds a new history item and saves it to the JSON file.
 func AddHistoryItem(history *History, query Query, output string) error {
+
+	if query.InputString == "" {
+		return nil
+	}
+
 	historyItem := HistoryItem{
 		Query:  query,
 		Output: output,
-		Date:   time.Now().Format(time.RFC3339),
+		Date:   time.Now().Format("Monday, January 2, 2006"),
 	}
 
 	history.HistoryList = append(history.HistoryList, historyItem)
