@@ -63,6 +63,8 @@ func saveCurrentState() {
 	err := history.AddHistoryItem(History, query, output)
 	checkNilErr(err)
 	updateHistoryPane()
+
+	createNewState()
 }
 
 // Create a new state preserving only the prompt and selected model.
