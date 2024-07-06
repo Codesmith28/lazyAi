@@ -28,7 +28,7 @@ func SendPrompt(promptString string, modelName string, inputString string) (stri
 
 	model := client.GenerativeModel(modelName)
 
-	fullPrompt := fmt.Sprintf("Context: %s\n\nQuestion: %s", promptString, inputString)
+	fullPrompt := fmt.Sprintf("%s\n\nQuestion: %s", promptString, inputString)
 
 	if promptString == "" {
 		fullPrompt = fmt.Sprintf("Question: %s", inputString)
