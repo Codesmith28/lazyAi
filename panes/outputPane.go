@@ -2,14 +2,13 @@ package panes
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
+	"github.com/Codesmith28/cheatScript/api"
 	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/Codesmith28/cheatScript/internal/clipboard"
-	core "github.com/Codesmith28/cheatScript/internal/queue"
 )
 
 var (
@@ -43,32 +42,24 @@ func init() {
 		})
 }
 
-func StartOutputMonitoring(
-	app *tview.Application,
-	clipboard *clipboard.Clipboard,
-	queue *core.Queue,
-) {
-	go func() {
-		for {
-			// Consume the response
-			message, err := queue.Consume()
-			if err != nil {
-				fmt.Println("Error consuming message:", err)
-				time.Sleep(time.Second) // Add a delay to avoid tight loop on errors
-				continue
-			}
+func HandlePromptChange(query *internal.Query, clipboard *clipboard.Clipboard, app *tview.Application) {
+	content, err := api.SendPrompt(query.PromptString, query.SelectedModel, query.InputString)
 
-			app.QueueUpdateDraw(func() {
-				outputMessage := fmt.Sprintf(message)
-				OutputText.OutputString = outputMessage
-				OutputPane.SetText(outputMessage)
-			})
+	if err != nil {
+		OutputText.OutputString = fmt.Sprintf("Error: %s", err)
+	} else {
+		OutputText.OutputString = content
+	}
 
-			clipboard.Mu.Lock()
-			clipboard.OutputText = message
-			err = clipboard.SetClipboardText(message)
-			checkNilErr(err)
-			clipboard.Mu.Unlock()
-		}
-	}()
+	app.QueueUpdateDraw(func() {
+		OutputPane.SetText(OutputText.OutputString)
+	})
+
+	if err == nil {
+		clipboard.Mu.Lock()
+		clipboard.OutputText = content
+		err = clipboard.SetClipboardText(content)
+		checkNilErr(err)
+		clipboard.Mu.Unlock()
+	}
 }
