@@ -48,7 +48,15 @@ func loadHistory(historyLocation string) {
 func updateHistoryPane() {
 	HistoryPane.Clear()
 	for _, item := range History.HistoryList {
-		HistoryPane.AddItem(item.Query.PromptString+" - "+item.Date, "", 0, nil)
+		var displayString string
+		if item.Query.PromptString == "" {
+			displayString = item.Query.InputString[:min(len(item.Query.InputString), 20)] + " ..."
+		} else {
+			displayString = item.Query.PromptString[:min(len(item.Query.PromptString), 20)] + " ..."
+		}
+		displayString += " - " + item.Date
+
+		HistoryPane.AddItem(displayString, "", 0, nil)
 	}
 }
 

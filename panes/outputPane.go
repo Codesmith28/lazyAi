@@ -61,6 +61,7 @@ func HandlePromptChange(
 	})
 
 	clipboard.Mu.Lock()
+	OutputText.OutputString = content
 	clipboard.OutputText = content
 	err = clipboard.SetClipboardText(content)
 
