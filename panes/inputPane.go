@@ -1,15 +1,12 @@
 package panes
 
 import (
-	"sync"
-
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
 	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/Codesmith28/cheatScript/internal/clipboard"
 	querymaker "github.com/Codesmith28/cheatScript/internal/queryMaker"
-	core "github.com/Codesmith28/cheatScript/internal/queue"
 )
 
 var (
@@ -39,9 +36,7 @@ func init() {
 		})
 }
 
-var once sync.Once
-
-func StartClipboardMonitoring(app *tview.Application, queue *core.Queue) {
+func StartClipboardMonitoring(app *tview.Application) {
 	clipboard.Clear()
 	clipboard := clipboard.NewClipboard()
 	var lastPublishedText string
@@ -62,14 +57,9 @@ func StartClipboardMonitoring(app *tview.Application, queue *core.Queue) {
 				selectedModel := Selected.SelectedModel
 
 				localQuery := querymaker.MakeQuery(text, promptString, selectedModel)
-
-				err = queue.Publish(localQuery)
-				checkNilErr(err)
 				lastPublishedText = text
 
-				once.Do(func() {
-					StartOutputMonitoring(app, clipboard, queue)
-				})
+				go HandlePromptChange(&localQuery, clipboard, app)
 			}
 		}
 	}()

@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/google/generative-ai-go/genai"
@@ -22,15 +21,23 @@ func SendPrompt(promptString string, modelName string, inputString string) (stri
 	err := godotenv.Load()
 	checkNilErr(err)
 
-	client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("API_KEY")))
+	apiKeyFile := ".local/share/lazyAi/lazy_ai_api"
+	apiKey, err := os.ReadFile(apiKeyFile)
+	checkNilErr(err)
+
+	client, err := genai.NewClient(ctx, option.WithAPIKey(string(apiKey)))
 	checkNilErr(err)
 	defer client.Close()
 
 	model := client.GenerativeModel(modelName)
 
-	// Restructure the prompt
-	fullPrompt := fmt.Sprintf("Context: %s\n\nQuestion: %s", promptString, inputString)
-	log.Printf("Full prompt: %s", fullPrompt)
+	var fullPrompt string
+
+	if promptString != "" {
+		fullPrompt = fmt.Sprintf("Context: %s \n\n Question: %s", promptString, inputString)
+	} else {
+		fullPrompt = fmt.Sprintf("Question: %s ", inputString)
+	}
 
 	resp, err := model.GenerateContent(ctx, genai.Text(fullPrompt))
 	checkNilErr(err)
