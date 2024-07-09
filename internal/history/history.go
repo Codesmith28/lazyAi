@@ -4,28 +4,24 @@ import (
 	"encoding/json"
 	"os"
 	"time"
+
+	"github.com/Codesmith28/cheatScript/internal"
 )
 
-const historyFile = "history.json"
+type (
+	Query       = internal.Query
+	HistoryItem = internal.HistoryItem
+	History     = internal.History
+)
 
-type Query struct {
-	InputString   string
-	PromptString  string
-	SelectedModel string
+func checkNilErr(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
 
-type HistoryItem struct {
-	Query  Query
-	Output string
-	Date   string
-}
-
-type History struct {
-	HistoryList []HistoryItem
-}
-
-// LoadHistory loads history from the JSON file.
-func LoadHistory() (*History, error) {
+// LoadHistory loads history from the specified JSON file.
+func LoadHistory(historyFile string) (*History, error) {
 	history := &History{}
 	if _, err := os.Stat(historyFile); os.IsNotExist(err) {
 		return history, nil
@@ -44,24 +40,19 @@ func LoadHistory() (*History, error) {
 	return history, nil
 }
 
-// SaveHistory saves history to the JSON file.
-func SaveHistory(history *History) error {
+// SaveHistory saves history to the specified JSON file.
+func SaveHistory(history *History, historyFile string) error {
 	data, err := json.Marshal(history)
-	if err != nil {
-		return err
-	}
+	checkNilErr(err)
 
 	err = os.WriteFile(historyFile, data, 0644)
-	if err != nil {
-		return err
-	}
+	checkNilErr(err)
 
 	return nil
 }
 
-// AddHistoryItem adds a new history item and saves it to the JSON file.
-func AddHistoryItem(history *History, query Query, output string) error {
-
+// AddHistoryItem adds a new history item and saves it to the specified JSON file.
+func AddHistoryItem(history *History, query Query, output, historyFile string) error {
 	if query.InputString == "" {
 		return nil
 	}
@@ -73,5 +64,5 @@ func AddHistoryItem(history *History, query Query, output string) error {
 	}
 
 	history.HistoryList = append(history.HistoryList, historyItem)
-	return SaveHistory(history)
+	return SaveHistory(history, historyFile)
 }

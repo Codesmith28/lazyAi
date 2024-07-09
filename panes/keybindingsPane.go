@@ -19,7 +19,7 @@ func init() {
 }
 
 // SetupGlobalKeybindings sets up global keybindings to focus on each pane.
-func SetupGlobalKeybindings(app *tview.Application) {
+func SetupGlobalKeybindings(app *tview.Application, HistoryLocation string) {
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Modifiers()&tcell.ModAlt != 0 {
 			switch event.Key() {
@@ -41,7 +41,7 @@ func SetupGlobalKeybindings(app *tview.Application) {
 					app.SetFocus(ModelsPane)
 					return nil
 				case 'S', 's':
-					saveCurrentState()
+					saveCurrentState(HistoryLocation)
 					return nil
 				}
 			}

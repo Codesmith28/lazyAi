@@ -17,7 +17,6 @@ import (
 )
 
 var (
-	HistoryPane     = panes.HistoryPane
 	ModelsPane      = panes.ModelsPane
 	OutputPane      = panes.OutputPane
 	PromptPane      = panes.PromptPane
@@ -30,16 +29,21 @@ var (
 	OutputText = panes.OutputText
 	Selected   = panes.Selected
 
-	fileLocation    string
-	historyLocation string
+	FileLocation    string
+	HistoryLocation string
 )
 
 func init() {
 	homeDir, err := os.UserHomeDir()
 	checkNilErr(err)
 
-	fileLocation = filepath.Join(homeDir, ".local/share/lazyAi/lazy_ai_api")
-	historyLocation = filepath.Join(homeDir, ".local/share/lazyAi/history.json")
+	FileLocation = filepath.Join(homeDir, ".local/share/lazyAi/lazy_ai_api")
+	HistoryLocation = filepath.Join(homeDir, ".local/share/lazyAi/history.json")
+
+	err = os.MkdirAll(filepath.Dir(FileLocation), os.ModePerm)
+	checkNilErr(err)
+	err = os.MkdirAll(filepath.Dir(HistoryLocation), os.ModePerm)
+	checkNilErr(err)
 }
 
 func checkNilErr(err error) {
@@ -49,7 +53,7 @@ func checkNilErr(err error) {
 }
 
 func checkCredentials() bool {
-	apiKey, err := os.ReadFile(fileLocation)
+	apiKey, err := os.ReadFile(FileLocation)
 	if err != nil {
 		return false
 	}
@@ -94,15 +98,10 @@ func checkCredentials() bool {
 func main() {
 	app := tview.NewApplication().EnableMouse(true)
 
-	// Check for credentials
 	if !checkCredentials() {
-		// Ensure the directory exists
-		err := os.MkdirAll(filepath.Dir(fileLocation), os.ModePerm)
-		checkNilErr(err)
-
 		credentialModal := panes.CreateCredentialModal(app, func(apiInput string) {
 			log.Println("ApiInput:", apiInput)
-			err := os.WriteFile(fileLocation, []byte(apiInput), 0644)
+			err := os.WriteFile(FileLocation, []byte(apiInput), 0644)
 			checkNilErr(err)
 
 			log.Println("Starting clipboard monitoring after credential input.")
@@ -113,7 +112,7 @@ func main() {
 		app.SetRoot(credentialModal, true)
 		log.Println("Running app for credential input.")
 
-		err = app.Run()
+		err := app.Run()
 		checkNilErr(err)
 	} else {
 		log.Println("Starting clipboard monitoring with existing credentials.")
@@ -123,13 +122,14 @@ func main() {
 }
 
 func setupMainUI(app *tview.Application) {
-	group2 := panes.CreateGroup2(HistoryPane, ModelsPane)
+	group2 := panes.CreateGroup2(panes.HistoryPane, ModelsPane)
 	group4 := panes.CreateGroup4(InputPane, PromptPane)
 	group3 := panes.CreateGroup3(group4, OutputPane)
 	group1 := panes.CreateGroup1(group2, group3)
 	mainFlex := panes.CreateMainFlex(group1, KeybindingsPane)
 
-	panes.SetupGlobalKeybindings(app)
+	panes.SetupGlobalKeybindings(app, HistoryLocation)
+	panes.InitHistoryPane(HistoryLocation)
 
 	app.SetRoot(mainFlex, true)
 	log.Println("Running app for main UI.")
