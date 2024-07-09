@@ -3,6 +3,8 @@ package main
 import (
 	"github.com/rivo/tview"
 
+	_ "embed"
+
 	"github.com/Codesmith28/cheatScript/panes"
 )
 
@@ -31,6 +33,7 @@ func main() {
 	app := tview.NewApplication().EnableMouse(true)
 
 	panes.StartClipboardMonitoring(app)
+	panes.ApplySystemNavConfig(app)
 
 	// Create layout groups
 	group2 := panes.CreateGroup2(HistoryPane, ModelsPane)
