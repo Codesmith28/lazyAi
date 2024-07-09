@@ -1,6 +1,7 @@
 package history
 
 import (
+	"crypto/sha256"
 	"encoding/json"
 	"os"
 	"time"
@@ -22,7 +23,10 @@ func checkNilErr(err error) {
 
 // LoadHistory loads history from the specified JSON file.
 func LoadHistory(historyFile string) (*History, error) {
-	history := &History{}
+	history := &History{
+		HistoryMap:  make(map[string]HistoryItem),
+		HistoryList: []HistoryItem{},
+	}
 	if _, err := os.Stat(historyFile); os.IsNotExist(err) {
 		return history, nil
 	}
@@ -57,12 +61,25 @@ func AddHistoryItem(history *History, query Query, output, historyFile string) e
 		return nil
 	}
 
+	key := hashString(query.InputString) + "|" + hashString(query.SelectedModel)
+
+	if _, ok := history.HistoryMap[key]; ok {
+		return nil
+	}
+
 	historyItem := HistoryItem{
 		Query:  query,
 		Output: output,
 		Date:   time.Now().Format("Monday, January 2, 2006"),
 	}
 
+	history.HistoryMap[key] = historyItem
 	history.HistoryList = append(history.HistoryList, historyItem)
 	return SaveHistory(history, historyFile)
+}
+
+func hashString(s string) string {
+	h := sha256.New()
+	h.Write([]byte(s))
+	return string(h.Sum(nil))
 }

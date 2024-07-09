@@ -13,6 +13,7 @@ type HistoryItem struct {
 }
 
 type History struct {
+	HistoryMap  map[string]HistoryItem
 	HistoryList []HistoryItem
 }
 
