@@ -14,12 +14,12 @@ func init() {
 		SetWrap(true)
 
 	KeybindingsPane.SetText(
-		`M-1: Prompt | M-2: Input | M-3: Output | M-4: History | M-5: Models | M-S: Save current state | M-O: Create new state`,
+		`M-1: Prompt | M-2: Input | M-3: Output | M-4: History | M-5: Models | M-S: Save current and create new state`,
 	)
 }
 
 // SetupGlobalKeybindings sets up global keybindings to focus on each pane.
-func SetupGlobalKeybindings(app *tview.Application) {
+func SetupGlobalKeybindings(app *tview.Application, HistoryLocation string) {
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Modifiers()&tcell.ModAlt != 0 {
 			switch event.Key() {
@@ -41,10 +41,7 @@ func SetupGlobalKeybindings(app *tview.Application) {
 					app.SetFocus(ModelsPane)
 					return nil
 				case 'S', 's':
-					saveCurrentState()
-					return nil
-				case 'O', 'o':
-					createNewState()
+					saveCurrentState(HistoryLocation)
 					return nil
 				}
 			}

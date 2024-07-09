@@ -1,9 +1,8 @@
 package panes
 
 import (
-	"fmt"
-
 	"github.com/gdamore/tcell/v2"
+	"github.com/getlantern/systray"
 	"github.com/rivo/tview"
 
 	"github.com/Codesmith28/cheatScript/api"
@@ -42,24 +41,34 @@ func init() {
 		})
 }
 
-func HandlePromptChange(query *internal.Query, clipboard *clipboard.Clipboard, app *tview.Application) {
-	content, err := api.SendPrompt(query.PromptString, query.SelectedModel, query.InputString)
+func HandlePromptChange(
+	query *internal.Query,
+	clipboard *clipboard.Clipboard,
+	app *tview.Application,
+) {
+	content, err := api.SendPrompt(
+		query.PromptString,
+		query.SelectedModel,
+		query.InputString,
+	)
 
 	if err != nil {
-		OutputText.OutputString = fmt.Sprintf("Error: %s", err)
-	} else {
-		OutputText.OutputString = content
+		panic(err)
 	}
 
 	app.QueueUpdateDraw(func() {
-		OutputPane.SetText(OutputText.OutputString)
+		OutputPane.SetText(content)
 	})
 
-	if err == nil {
-		clipboard.Mu.Lock()
-		clipboard.OutputText = content
-		err = clipboard.SetClipboardText(content)
-		checkNilErr(err)
-		clipboard.Mu.Unlock()
+	clipboard.Mu.Lock()
+	clipboard.OutputText = content
+	err = clipboard.SetClipboardText(content)
+
+	if err != nil {
+		panic(err)
 	}
+
+	clipboard.Mu.Unlock()
+
+	systray.SetTooltip("Ready!!")
 }

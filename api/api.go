@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/google/generative-ai-go/genai"
@@ -12,11 +13,11 @@ import (
 
 func checkNilErr(err error) {
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
 
-func SendPrompt(promptString string, modelName string, inputString string) (string, error) {
+func SendPrompt(promptString, modelName, inputString string) (string, error) {
 	ctx := context.Background()
 	err := godotenv.Load()
 	checkNilErr(err)

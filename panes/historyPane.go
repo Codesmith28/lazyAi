@@ -12,8 +12,8 @@ var (
 	History     = &history.History{}
 )
 
-func init() {
-	loadHistory()
+func InitHistoryPane(historyLocation string) {
+	loadHistory(historyLocation)
 
 	HistoryPane.
 		SetSelectedFunc(func(index int, mainText, secondaryText string, shortcut rune) {
@@ -28,7 +28,7 @@ func init() {
 			case tcell.KeyRune:
 				switch event.Rune() {
 				case 'd':
-					deleteHistoryItem()
+					deleteHistoryItem(historyLocation)
 				}
 			}
 			return event
@@ -36,11 +36,10 @@ func init() {
 }
 
 // Load history from the JSON file and populate the history pane.
-func loadHistory() {
-	historyData, err := history.LoadHistory()
-	if err != nil {
-		panic(err)
-	}
+func loadHistory(historyLocation string) {
+	historyData, err := history.LoadHistory(historyLocation)
+	checkNilErr(err)
+
 	History = historyData
 	updateHistoryPane()
 }
@@ -54,18 +53,18 @@ func updateHistoryPane() {
 }
 
 // Save the current state as a history item.
-func saveCurrentState() {
+func saveCurrentState(historyLocation string) {
 	query := history.Query{
 		InputString:   InputText.InputString,
 		PromptString:  PromptText.PromptString,
 		SelectedModel: Selected.SelectedModel,
 	}
 	output := OutputText.OutputString
-	err := history.AddHistoryItem(History, query, output)
-	if err != nil {
-		panic(err)
-	}
+	err := history.AddHistoryItem(History, query, output, historyLocation)
+	checkNilErr(err)
 	updateHistoryPane()
+
+	createNewState()
 }
 
 // Create a new state preserving only the prompt and selected model.
@@ -85,15 +84,14 @@ func loadState(item history.HistoryItem) {
 }
 
 // Delete the selected history item from the history list
-func deleteHistoryItem() {
+func deleteHistoryItem(historyLocation string) {
 	selectedIndex := HistoryPane.GetCurrentItem()
 	History.HistoryList = append(
 		History.HistoryList[:selectedIndex],
 		History.HistoryList[selectedIndex+1:]...)
-	err := history.SaveHistory(History)
-	if err != nil {
-		panic(err)
-	}
+	err := history.SaveHistory(History, historyLocation)
+
+	checkNilErr(err)
 	updateHistoryPane()
 }
 

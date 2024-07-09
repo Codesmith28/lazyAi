@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -24,9 +23,6 @@ func init() {
 	if ostype == "windows" {
 		filelocation = filepath.Join(homeDir, "AppData\\Local\\lazyAi\\lazy_ai_api")
 		historyLocation = filepath.Join(homeDir, "AppData\\Local\\lazyAi\\history.json")
-
-		fmt.Println(filelocation)
-		fmt.Println(historyLocation)
 	} else if ostype == "darwin" {
 		filelocation = filepath.Join(homeDir, "Library/Application Support/lazyAi/lazy_ai_api")
 		historyLocation = filepath.Join(homeDir, "Library/Application Support/lazyAi/history.json")

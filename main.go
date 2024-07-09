@@ -1,24 +1,17 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
-	"time"
 
 	"github.com/rivo/tview"
 
-	"github.com/Codesmith28/cheatScript/internal"
+	"github.com/Codesmith28/cheatScript/api"
 	"github.com/Codesmith28/cheatScript/panes"
 )
 
 var (
-	HistoryPane     = panes.HistoryPane
 	ModelsPane      = panes.ModelsPane
 	OutputPane      = panes.OutputPane
 	PromptPane      = panes.PromptPane
@@ -31,13 +24,21 @@ var (
 	OutputText = panes.OutputText
 	Selected   = panes.Selected
 
-	filelocation    string
-	historyLocation string
+	FileLocation    string
+	HistoryLocation string
 )
 
 func init() {
-	filelocation = internal.GetFileLocation()
-	historyLocation = internal.GetHistoryLocation()
+	homeDir, err := os.UserHomeDir()
+	checkNilErr(err)
+
+	FileLocation = filepath.Join(homeDir, ".local/share/lazyAi/lazy_ai_api")
+	HistoryLocation = filepath.Join(homeDir, ".local/share/lazyAi/history.json")
+
+	err = os.MkdirAll(filepath.Dir(FileLocation), os.ModePerm)
+	checkNilErr(err)
+	err = os.MkdirAll(filepath.Dir(HistoryLocation), os.ModePerm)
+	checkNilErr(err)
 }
 
 func checkNilErr(err error) {
@@ -46,87 +47,45 @@ func checkNilErr(err error) {
 	}
 }
 
-func checkCredentials() bool {
-	apiKey, err := os.ReadFile(filelocation)
-	if err != nil {
-		return false
-	}
-
-	// Validate the API key by pinging an endpoint
-	apiKeyStr := strings.TrimSpace(string(apiKey))
-	client := &http.Client{Timeout: 10 * time.Second}
-	url := fmt.Sprintf(
-		"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=%s",
-		apiKeyStr,
-	)
-
-	payload := map[string]interface{}{
-		"contents": []map[string]interface{}{
-			{
-				"parts": []map[string]interface{}{
-					{"text": "Ping, reply with a 200 status code."},
-				},
-			},
-		},
-	}
-
-	payloadBytes, err := json.Marshal(payload)
-	checkNilErr(err)
-
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(payloadBytes))
-	checkNilErr(err)
-
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := client.Do(req)
-	checkNilErr(err)
-	defer resp.Body.Close()
-
-	return resp.StatusCode == http.StatusOK
-}
-
 func main() {
 	app := tview.NewApplication().EnableMouse(true)
 
-	// Check for credentials
-	if !checkCredentials() {
-		// Ensure the directory exists
-		err := os.MkdirAll(filepath.Dir(filelocation), os.ModePerm)
-		checkNilErr(err)
-
+	if !api.CheckCredentials(FileLocation) {
 		credentialModal := panes.CreateCredentialModal(app, func(apiInput string) {
 			log.Println("ApiInput:", apiInput)
-			err := os.WriteFile(filelocation, []byte(apiInput), 0644)
+			err := os.WriteFile(FileLocation, []byte(apiInput), 0644)
 			checkNilErr(err)
 
 			log.Println("Starting clipboard monitoring after credential input.")
-			panes.StartClipboardMonitoring(app)
-			panes.ApplySystemNavConfig(app)
 			setupMainUI(app)
 		})
 
 		app.SetRoot(credentialModal, true)
 
-		err = app.Run()
+		err := app.Run()
 		checkNilErr(err)
 	} else {
-		panes.StartClipboardMonitoring(app)
-		panes.ApplySystemNavConfig(app)
+		log.Println("Starting clipboard monitoring with existing credentials.")
 		setupMainUI(app)
 	}
 }
 
 func setupMainUI(app *tview.Application) {
-	group2 := panes.CreateGroup2(HistoryPane, ModelsPane)
+	group2 := panes.CreateGroup2(panes.HistoryPane, ModelsPane)
 	group4 := panes.CreateGroup4(InputPane, PromptPane)
 	group3 := panes.CreateGroup3(group4, OutputPane)
 	group1 := panes.CreateGroup1(group2, group3)
 	mainFlex := panes.CreateMainFlex(group1, KeybindingsPane)
 
-	panes.SetupGlobalKeybindings(app)
+	panes.SetupGlobalKeybindings(app, HistoryLocation)
+	panes.InitHistoryPane(HistoryLocation)
 
 	app.SetRoot(mainFlex, true)
 	log.Println("Running app for main UI.")
+
+	panes.StartClipboardMonitoring(app)
+	panes.ApplySystemNavConfig(app)
+
 	err := app.Run()
 	checkNilErr(err)
 }
