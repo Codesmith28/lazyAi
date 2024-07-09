@@ -8,6 +8,7 @@ import (
 	"github.com/rivo/tview"
 
 	"github.com/Codesmith28/cheatScript/api"
+	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/Codesmith28/cheatScript/panes"
 )
 
@@ -29,13 +30,10 @@ var (
 )
 
 func init() {
-	homeDir, err := os.UserHomeDir()
-	checkNilErr(err)
+	FileLocation = internal.GetFileLocation()
+	HistoryLocation = internal.GetHistoryLocation()
 
-	FileLocation = filepath.Join(homeDir, ".local/share/lazyAi/lazy_ai_api")
-	HistoryLocation = filepath.Join(homeDir, ".local/share/lazyAi/history.json")
-
-	err = os.MkdirAll(filepath.Dir(FileLocation), os.ModePerm)
+	err := os.MkdirAll(filepath.Dir(FileLocation), os.ModePerm)
 	checkNilErr(err)
 	err = os.MkdirAll(filepath.Dir(HistoryLocation), os.ModePerm)
 	checkNilErr(err)
