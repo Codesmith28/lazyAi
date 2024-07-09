@@ -42,8 +42,18 @@ func init() {
 		})
 }
 
-func HandlePromptChange(query *internal.Query, clipboard *clipboard.Clipboard, app *tview.Application) {
-	content, err := api.SendPrompt(query.PromptString, query.SelectedModel, query.InputString)
+func HandlePromptChange(
+	query *internal.Query,
+	clipboard *clipboard.Clipboard,
+	app *tview.Application,
+	FileLocation string,
+) {
+	content, err := api.SendPrompt(
+		query.PromptString,
+		query.SelectedModel,
+		query.InputString,
+		FileLocation,
+	)
 
 	if err != nil {
 		OutputText.OutputString = fmt.Sprintf("Error: %s", err)

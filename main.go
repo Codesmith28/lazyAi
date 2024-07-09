@@ -1,18 +1,13 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
-	"time"
 
 	"github.com/rivo/tview"
 
+	"github.com/Codesmith28/cheatScript/api"
 	"github.com/Codesmith28/cheatScript/panes"
 )
 
@@ -52,60 +47,16 @@ func checkNilErr(err error) {
 	}
 }
 
-func checkCredentials() bool {
-	apiKey, err := os.ReadFile(FileLocation)
-	if err != nil {
-		return false
-	}
-
-	// Validate the API key by pinging an endpoint
-	apiKeyStr := strings.TrimSpace(string(apiKey))
-	client := &http.Client{Timeout: 10 * time.Second}
-	url := fmt.Sprintf(
-		"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=%s",
-		apiKeyStr,
-	)
-
-	payload := map[string]interface{}{
-		"contents": []map[string]interface{}{
-			{
-				"parts": []map[string]interface{}{
-					{"text": "Explain how AI works"},
-				},
-			},
-		},
-	}
-
-	payloadBytes, err := json.Marshal(payload)
-	checkNilErr(err)
-
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(payloadBytes))
-	checkNilErr(err)
-
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := client.Do(req)
-	checkNilErr(err)
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return false
-	}
-
-	return true
-}
-
 func main() {
 	app := tview.NewApplication().EnableMouse(true)
 
-	if !checkCredentials() {
+	if !api.CheckCredentials(FileLocation) {
 		credentialModal := panes.CreateCredentialModal(app, func(apiInput string) {
 			log.Println("ApiInput:", apiInput)
 			err := os.WriteFile(FileLocation, []byte(apiInput), 0644)
 			checkNilErr(err)
 
 			log.Println("Starting clipboard monitoring after credential input.")
-			panes.StartClipboardMonitoring(app)
 			setupMainUI(app)
 		})
 
@@ -116,7 +67,6 @@ func main() {
 		checkNilErr(err)
 	} else {
 		log.Println("Starting clipboard monitoring with existing credentials.")
-		panes.StartClipboardMonitoring(app)
 		setupMainUI(app)
 	}
 }
@@ -133,6 +83,9 @@ func setupMainUI(app *tview.Application) {
 
 	app.SetRoot(mainFlex, true)
 	log.Println("Running app for main UI.")
+
+	panes.StartClipboardMonitoring(app, FileLocation)
+
 	err := app.Run()
 	checkNilErr(err)
 }

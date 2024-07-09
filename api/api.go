@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/google/generative-ai-go/genai"
@@ -12,16 +13,16 @@ import (
 
 func checkNilErr(err error) {
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
 
-func SendPrompt(promptString string, modelName string, inputString string) (string, error) {
+func SendPrompt(promptString, modelName, inputString, FileLocation string) (string, error) {
 	ctx := context.Background()
 	err := godotenv.Load()
 	checkNilErr(err)
 
-	apiKeyFile := ".local/share/lazyAi/lazy_ai_api"
+	apiKeyFile := FileLocation
 	apiKey, err := os.ReadFile(apiKeyFile)
 	checkNilErr(err)
 

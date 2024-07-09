@@ -36,7 +36,7 @@ func init() {
 		})
 }
 
-func StartClipboardMonitoring(app *tview.Application) {
+func StartClipboardMonitoring(app *tview.Application, FileLocation string) {
 	clipboard.Clear()
 	clipboard := clipboard.NewClipboard()
 	var lastPublishedText string
@@ -59,7 +59,7 @@ func StartClipboardMonitoring(app *tview.Application) {
 				localQuery := querymaker.MakeQuery(text, promptString, selectedModel)
 				lastPublishedText = text
 
-				go HandlePromptChange(&localQuery, clipboard, app)
+				go HandlePromptChange(&localQuery, clipboard, app, FileLocation)
 			}
 		}
 	}()
