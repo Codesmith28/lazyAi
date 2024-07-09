@@ -6,17 +6,16 @@ import (
 
 func CreateCredentialModal(
 	app *tview.Application,
-	onSubmit func(username, password string),
+	onSubmit func(password string),
 ) tview.Primitive {
-	username := ""
-	password := ""
+	apiKey := ""
 
 	form := tview.NewForm().
 		AddPasswordField("Api key", "", 43, '*', func(text string) {
-			password = text
+			apiKey = text
 		}).
 		AddButton("Submit", func() {
-			onSubmit(username, password)
+			onSubmit(apiKey)
 		}).
 		AddButton("Cancel", func() {
 			app.Stop()

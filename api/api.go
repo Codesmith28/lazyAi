@@ -21,7 +21,11 @@ func SendPrompt(promptString string, modelName string, inputString string) (stri
 	err := godotenv.Load()
 	checkNilErr(err)
 
-	client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("API_KEY")))
+	apiKeyFile := ".local/share/lazyAi/lazy_ai_api"
+	apiKey, err := os.ReadFile(apiKeyFile)
+	checkNilErr(err)
+
+	client, err := genai.NewClient(ctx, option.WithAPIKey(string(apiKey)))
 	checkNilErr(err)
 	defer client.Close()
 
