@@ -1,9 +1,17 @@
 package main
 
 import (
-	"github.com/rivo/tview"
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
+	"time"
 
-	_ "embed"
+	"github.com/rivo/tview"
 
 	"github.com/Codesmith28/cheatScript/panes"
 )
@@ -21,31 +29,111 @@ var (
 	InputText  = panes.InputText
 	OutputText = panes.OutputText
 	Selected   = panes.Selected
+
+	fileLocation    string
+	historyLocation string
 )
+
+func init() {
+	homeDir, err := os.UserHomeDir()
+	checkNilErr(err)
+
+	fileLocation = filepath.Join(homeDir, ".local/share/lazyAi/lazy_ai_api")
+	historyLocation = filepath.Join(homeDir, ".local/share/lazyAi/history.json")
+}
 
 func checkNilErr(err error) {
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
+}
+
+func checkCredentials() bool {
+	apiKey, err := os.ReadFile(fileLocation)
+	if err != nil {
+		return false
+	}
+
+	// Validate the API key by pinging an endpoint
+	apiKeyStr := strings.TrimSpace(string(apiKey))
+	client := &http.Client{Timeout: 10 * time.Second}
+	url := fmt.Sprintf(
+		"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=%s",
+		apiKeyStr,
+	)
+
+	payload := map[string]interface{}{
+		"contents": []map[string]interface{}{
+			{
+				"parts": []map[string]interface{}{
+					{"text": "Explain how AI works"},
+				},
+			},
+		},
+	}
+
+	payloadBytes, err := json.Marshal(payload)
+	checkNilErr(err)
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(payloadBytes))
+	checkNilErr(err)
+
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
+	checkNilErr(err)
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return false
+	}
+
+	return true
 }
 
 func main() {
 	app := tview.NewApplication().EnableMouse(true)
 
-	panes.StartClipboardMonitoring(app)
-	panes.ApplySystemNavConfig(app)
+	// Check for credentials
+	if !checkCredentials() {
+		// Ensure the directory exists
+		err := os.MkdirAll(filepath.Dir(fileLocation), os.ModePerm)
+		checkNilErr(err)
 
-	// Create layout groups
+		credentialModal := panes.CreateCredentialModal(app, func(apiInput string) {
+			log.Println("ApiInput:", apiInput)
+			err := os.WriteFile(fileLocation, []byte(apiInput), 0644)
+			checkNilErr(err)
+
+			log.Println("Starting clipboard monitoring after credential input.")
+			panes.StartClipboardMonitoring(app)
+			setupMainUI(app)
+		})
+
+		app.SetRoot(credentialModal, true)
+		log.Println("Running app for credential input.")
+
+		err = app.Run()
+		checkNilErr(err)
+	} else {
+		log.Println("Starting clipboard monitoring with existing credentials.")
+		panes.StartClipboardMonitoring(app)
+		panes.ApplySystemNavConfig(app)
+		setupMainUI(app)
+	}
+}
+
+func setupMainUI(app *tview.Application) {
 	group2 := panes.CreateGroup2(HistoryPane, ModelsPane)
 	group4 := panes.CreateGroup4(InputPane, PromptPane)
 	group3 := panes.CreateGroup3(group4, OutputPane)
 	group1 := panes.CreateGroup1(group2, group3)
 	mainFlex := panes.CreateMainFlex(group1, KeybindingsPane)
 
-	// Set up global KeybindingsPane
 	panes.SetupGlobalKeybindings(app)
 
-	// Set up the application root
-	err := app.SetRoot(mainFlex, true).Run()
+	app.SetRoot(mainFlex, true)
+	log.Println("Running app for main UI.")
+	err := app.Run()
 	checkNilErr(err)
 }
