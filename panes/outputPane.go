@@ -2,10 +2,8 @@ package panes
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/gdamore/tcell/v2"
-	"github.com/getlantern/systray"
 	"github.com/rivo/tview"
 
 	"github.com/Codesmith28/cheatScript/api"
@@ -64,10 +62,4 @@ func HandlePromptChange(query *internal.Query, clipboard *clipboard.Clipboard, a
 		checkNilErr(err)
 		clipboard.Mu.Unlock()
 	}
-
-	systray.SetTooltip("Ready!!")
-
-	time.Sleep(1 * time.Second)
-
-	systray.SetTooltip("Started!!")
 }

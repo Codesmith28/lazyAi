@@ -13,6 +13,7 @@ import (
 
 	"github.com/rivo/tview"
 
+	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/Codesmith28/cheatScript/panes"
 )
 
@@ -30,16 +31,13 @@ var (
 	OutputText = panes.OutputText
 	Selected   = panes.Selected
 
-	fileLocation    string
+	filelocation    string
 	historyLocation string
 )
 
 func init() {
-	homeDir, err := os.UserHomeDir()
-	checkNilErr(err)
-
-	fileLocation = filepath.Join(homeDir, ".local/share/lazyAi/lazy_ai_api")
-	historyLocation = filepath.Join(homeDir, ".local/share/lazyAi/history.json")
+	filelocation = internal.GetFileLocation()
+	historyLocation = internal.GetHistoryLocation()
 }
 
 func checkNilErr(err error) {
@@ -49,7 +47,7 @@ func checkNilErr(err error) {
 }
 
 func checkCredentials() bool {
-	apiKey, err := os.ReadFile(fileLocation)
+	apiKey, err := os.ReadFile(filelocation)
 	if err != nil {
 		return false
 	}
@@ -66,7 +64,7 @@ func checkCredentials() bool {
 		"contents": []map[string]interface{}{
 			{
 				"parts": []map[string]interface{}{
-					{"text": "Explain how AI works"},
+					{"text": "Ping, reply with a 200 status code."},
 				},
 			},
 		},
@@ -84,11 +82,7 @@ func checkCredentials() bool {
 	checkNilErr(err)
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return false
-	}
-
-	return true
+	return resp.StatusCode == http.StatusOK
 }
 
 func main() {
@@ -97,26 +91,25 @@ func main() {
 	// Check for credentials
 	if !checkCredentials() {
 		// Ensure the directory exists
-		err := os.MkdirAll(filepath.Dir(fileLocation), os.ModePerm)
+		err := os.MkdirAll(filepath.Dir(filelocation), os.ModePerm)
 		checkNilErr(err)
 
 		credentialModal := panes.CreateCredentialModal(app, func(apiInput string) {
 			log.Println("ApiInput:", apiInput)
-			err := os.WriteFile(fileLocation, []byte(apiInput), 0644)
+			err := os.WriteFile(filelocation, []byte(apiInput), 0644)
 			checkNilErr(err)
 
 			log.Println("Starting clipboard monitoring after credential input.")
 			panes.StartClipboardMonitoring(app)
+			panes.ApplySystemNavConfig(app)
 			setupMainUI(app)
 		})
 
 		app.SetRoot(credentialModal, true)
-		log.Println("Running app for credential input.")
 
 		err = app.Run()
 		checkNilErr(err)
 	} else {
-		log.Println("Starting clipboard monitoring with existing credentials.")
 		panes.StartClipboardMonitoring(app)
 		panes.ApplySystemNavConfig(app)
 		setupMainUI(app)

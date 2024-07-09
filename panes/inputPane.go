@@ -2,7 +2,6 @@ package panes
 
 import (
 	"github.com/gdamore/tcell/v2"
-	"github.com/getlantern/systray"
 	"github.com/rivo/tview"
 
 	"github.com/Codesmith28/cheatScript/internal"
@@ -59,8 +58,6 @@ func StartClipboardMonitoring(app *tview.Application) {
 
 				localQuery := querymaker.MakeQuery(text, promptString, selectedModel)
 				lastPublishedText = text
-
-				systray.SetTooltip("Processing...")
 
 				go HandlePromptChange(&localQuery, clipboard, app)
 			}

@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 	"fmt"
-	"os"
 
+	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/google/generative-ai-go/genai"
 	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
@@ -21,9 +21,7 @@ func SendPrompt(promptString string, modelName string, inputString string) (stri
 	err := godotenv.Load()
 	checkNilErr(err)
 
-	apiKeyFile := ".local/share/lazyAi/lazy_ai_api"
-	apiKey, err := os.ReadFile(apiKeyFile)
-	checkNilErr(err)
+	apiKey := internal.GetAPIKey()
 
 	client, err := genai.NewClient(ctx, option.WithAPIKey(string(apiKey)))
 	checkNilErr(err)
