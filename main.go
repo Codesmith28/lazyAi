@@ -27,22 +27,41 @@ func checkNilErr(err error) {
 	}
 }
 
+func checkCredentials() bool {
+	return false // Placeholder
+}
+
 func main() {
 	app := tview.NewApplication().EnableMouse(true)
 
 	panes.StartClipboardMonitoring(app)
 
-	// Create layout groups
+	// Check for credentials
+	if !checkCredentials() {
+		credentialModal := panes.CreateCredentialModal(app, func(username, password string) {
+			println("Username:", username, "Password:", password)
+
+			// After handling credentials, set up the main UI
+			setupMainUI(app)
+		})
+		app.SetRoot(credentialModal, true)
+		err := app.Run()
+		checkNilErr(err)
+	} else {
+		setupMainUI(app)
+	}
+}
+
+func setupMainUI(app *tview.Application) {
 	group2 := panes.CreateGroup2(HistoryPane, ModelsPane)
 	group4 := panes.CreateGroup4(InputPane, PromptPane)
 	group3 := panes.CreateGroup3(group4, OutputPane)
 	group1 := panes.CreateGroup1(group2, group3)
 	mainFlex := panes.CreateMainFlex(group1, KeybindingsPane)
 
-	// Set up global KeybindingsPane
 	panes.SetupGlobalKeybindings(app)
 
-	// Set up the application root
-	err := app.SetRoot(mainFlex, true).Run()
+	app.SetRoot(mainFlex, true)
+	err := app.Run()
 	checkNilErr(err)
 }
