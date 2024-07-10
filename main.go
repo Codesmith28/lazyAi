@@ -13,6 +13,7 @@ import (
 )
 
 var (
+	HistoryPane     = panes.HistoryPane
 	ModelsPane      = panes.ModelsPane
 	OutputPane      = panes.OutputPane
 	PromptPane      = panes.PromptPane
@@ -69,7 +70,7 @@ func main() {
 }
 
 func setupMainUI(app *tview.Application) {
-	group2 := panes.CreateGroup2(panes.HistoryPane, ModelsPane)
+	group2 := panes.CreateGroup2(HistoryPane, ModelsPane)
 	group4 := panes.CreateGroup4(InputPane, PromptPane)
 	group3 := panes.CreateGroup3(group4, OutputPane)
 	group1 := panes.CreateGroup1(group2, group3)
