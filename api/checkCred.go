@@ -4,17 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 )
 
-func CheckCredentials(FileLocation string) bool {
-	apiKey, err := os.ReadFile(FileLocation)
-	if err != nil {
-		return false
-	}
+func CheckCredentials(apiInput string) bool {
+	apiKey := []byte(apiInput)
 
 	// Validate the API key by pinging an endpoint
 	apiKeyStr := strings.TrimSpace(string(apiKey))
@@ -45,6 +42,8 @@ func CheckCredentials(FileLocation string) bool {
 	resp, err := client.Do(req)
 	checkNilErr(err)
 	defer resp.Body.Close()
+
+	log.Println(resp.StatusCode)
 
 	return resp.StatusCode == http.StatusOK
 }

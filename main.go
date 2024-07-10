@@ -82,7 +82,6 @@ func setupMainUI(app *tview.Application) {
 	panes.InitHistoryPane(HistoryLocation)
 
 	app.SetRoot(mainFlex, true)
-	log.Println("Running app for main UI.")
 
 	panes.StartClipboardMonitoring(app)
 	panes.ApplySystemNavConfig(app)
