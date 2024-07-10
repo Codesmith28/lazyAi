@@ -2,13 +2,14 @@ package panes
 
 import (
 	"log"
+
+	"github.com/gdamore/tcell/v2"
 )
 
-func checkNilErr(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
+var (
+	ActiveBorderCol   = tcell.ColorGreen
+	InactiveBorderCol = tcell.ColorDarkGray
+)
 
 func UpdateInputPane() {
 	InputPane.SetText(InputText.InputString)
@@ -24,4 +25,10 @@ func UpdatePromptPane() {
 
 func SelectModel(model string) {
 	Selected.SelectedModel = model
+}
+
+func checkNilErr(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
 }
