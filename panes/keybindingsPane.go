@@ -14,7 +14,7 @@ func init() {
 		SetWrap(true)
 
 	KeybindingsPane.SetText(
-		`M-1: Prompt | M-2: Input | M-3: Output | M-4: History | M-5: Models | M-S: Save current and create new state`,
+		`M-1: Prompt | M-2: Input | M-3: Output | M-4: History | M-5: Models | M-S: Save current and create new state | M-O: Create new state`,
 	)
 }
 
@@ -42,6 +42,9 @@ func SetupGlobalKeybindings(app *tview.Application, HistoryLocation string) {
 					return nil
 				case 'S', 's':
 					saveCurrentState(HistoryLocation)
+					return nil
+				case 'O', 'o':
+					createNewState()
 					return nil
 				}
 			}
