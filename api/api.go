@@ -7,7 +7,6 @@ import (
 
 	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/google/generative-ai-go/genai"
-	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
 )
 
@@ -19,8 +18,6 @@ func checkNilErr(err error) {
 
 func SendPrompt(promptString, modelName, inputString string) (string, error) {
 	ctx := context.Background()
-	err := godotenv.Load()
-	checkNilErr(err)
 
 	apiKey := internal.GetAPIKey()
 

@@ -3,6 +3,9 @@ package panes
 import (
 	_ "embed"
 
+	"os"
+	"os/signal"
+
 	"github.com/getlantern/systray"
 	"github.com/rivo/tview"
 )
@@ -11,7 +14,6 @@ import (
 var iconBytes []byte
 
 func ApplySystemNavConfig(app *tview.Application) {
-
 	onReady := func() {
 		systray.SetIcon(iconBytes)
 		systray.SetTitle("AI model is now on your clipboard!!")
@@ -23,6 +25,16 @@ func ApplySystemNavConfig(app *tview.Application) {
 			<-mQuit.ClickedCh
 			app.Stop()
 			systray.Quit()
+		}()
+
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, os.Interrupt)
+		go func() {
+			for range c {
+				app.Stop()
+				systray.Quit()
+				os.Exit(0)
+			}
 		}()
 	}
 
