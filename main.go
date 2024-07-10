@@ -47,8 +47,9 @@ func checkNilErr(err error) {
 
 func main() {
 	app := tview.NewApplication().EnableMouse(true)
+	apiKey := internal.GetAPIKey()
 
-	if !api.CheckCredentials(FileLocation) {
+	if !api.CheckCredentials(string(apiKey)) {
 		credentialModal := panes.CreateCredentialModal(app, func(apiInput string) {
 
 			if ok := api.CheckCredentials(apiInput); !ok {

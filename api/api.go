@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/google/generative-ai-go/genai"
@@ -11,18 +10,22 @@ import (
 	"google.golang.org/api/option"
 )
 
-func checkNilErr(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
+func checkNilErr(err error) error {
+	return err
 }
 
-func SendPrompt(promptString, modelName, inputString string) (string, error) {
+func SendPrompt(promptString, modelName, inputString string, apiKeyValidate *string) (string, error) {
 	ctx := context.Background()
 	err := godotenv.Load()
 	checkNilErr(err)
 
-	apiKey := internal.GetAPIKey()
+	var apiKey string
+
+	if apiKeyValidate != nil {
+		apiKey = *apiKeyValidate
+	} else {
+		apiKey = internal.GetAPIKey()
+	}
 
 	client, err := genai.NewClient(ctx, option.WithAPIKey(string(apiKey)))
 	checkNilErr(err)

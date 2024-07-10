@@ -50,6 +50,7 @@ func HandlePromptChange(
 		query.PromptString,
 		query.SelectedModel,
 		query.InputString,
+		nil,
 	)
 
 	if err != nil {
