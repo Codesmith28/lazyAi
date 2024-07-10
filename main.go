@@ -50,11 +50,15 @@ func main() {
 
 	if !api.CheckCredentials(FileLocation) {
 		credentialModal := panes.CreateCredentialModal(app, func(apiInput string) {
-			log.Println("ApiInput:", apiInput)
+
+			if ok := api.CheckCredentials(apiInput); !ok {
+				app.Stop()
+				log.Println("Invalid API key. Please try again.")
+				return
+			}
+
 			err := os.WriteFile(FileLocation, []byte(apiInput), 0644)
 			checkNilErr(err)
-
-			log.Println("Starting clipboard monitoring after credential input.")
 			setupMainUI(app)
 		})
 
@@ -63,7 +67,6 @@ func main() {
 		err := app.Run()
 		checkNilErr(err)
 	} else {
-		log.Println("Starting clipboard monitoring with existing credentials.")
 		setupMainUI(app)
 	}
 }
