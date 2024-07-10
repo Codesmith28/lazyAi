@@ -47,7 +47,7 @@ func GetAPIKey() string {
 		// try to read the file again
 		apiKey, err := os.ReadFile(filelocation)
 		if err != nil {
-			panic(err)
+			return "" // this on read by api.go will be throwing out an error, moreover this will only be happening if the file is not found
 		}
 
 		return string(apiKey)

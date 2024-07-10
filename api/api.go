@@ -6,21 +6,13 @@ import (
 
 	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/google/generative-ai-go/genai"
-	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
 )
 
-func checkNilErr(err error) error {
-	return err
-}
-
 func SendPrompt(promptString, modelName, inputString string, apiKeyValidate *string) (string, error) {
 	ctx := context.Background()
-	err := godotenv.Load()
-	checkNilErr(err)
 
 	var apiKey string
-
 	if apiKeyValidate != nil {
 		apiKey = *apiKeyValidate
 	} else {
@@ -28,7 +20,10 @@ func SendPrompt(promptString, modelName, inputString string, apiKeyValidate *str
 	}
 
 	client, err := genai.NewClient(ctx, option.WithAPIKey(string(apiKey)))
-	checkNilErr(err)
+	if err != nil {
+		return "", err
+	}
+
 	defer client.Close()
 
 	model := client.GenerativeModel(modelName)
@@ -42,7 +37,9 @@ func SendPrompt(promptString, modelName, inputString string, apiKeyValidate *str
 	}
 
 	resp, err := model.GenerateContent(ctx, genai.Text(fullPrompt))
-	checkNilErr(err)
+	if err != nil {
+		return "", err
+	}
 
 	if resp != nil && len(resp.Candidates) > 0 {
 		promptAns, ok := resp.Candidates[0].Content.Parts[0].(genai.Text)
