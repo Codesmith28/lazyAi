@@ -16,6 +16,7 @@ var (
 var availableModels = map[string]*internal.Model{
 	"Gemini Flash":   {SelectedModel: "gemini-1.5-flash"},
 	"Gemini Pro 1.0": {SelectedModel: "gemini-1.0-pro"},
+	"Gemini Pro 1.5": {SelectedModel: "gemini-1.5-pro"},
 }
 
 func init() {

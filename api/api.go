@@ -19,7 +19,8 @@ func SendPrompt(promptString, modelName, inputString string, apiKeyValidate *str
 		apiKey = internal.GetAPIKey()
 	}
 
-	client, err := genai.NewClient(ctx, option.WithAPIKey(string(apiKey)))
+	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
+
 	if err != nil {
 		return "", err
 	}
@@ -39,6 +40,8 @@ func SendPrompt(promptString, modelName, inputString string, apiKeyValidate *str
 	resp, err := model.GenerateContent(ctx, genai.Text(fullPrompt))
 	if err != nil {
 		return "", err
+	} else if apiKeyValidate != nil {
+		return "", nil
 	}
 
 	if resp != nil && len(resp.Candidates) > 0 {
