@@ -3,28 +3,29 @@ package api
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/google/generative-ai-go/genai"
+	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
 )
 
-func SendPrompt(promptString, modelName, inputString string, apiKeyValidate *string) (string, error) {
-	ctx := context.Background()
-
-	var apiKey string
-	if apiKeyValidate != nil {
-		apiKey = *apiKeyValidate
-	} else {
-		apiKey = internal.GetAPIKey()
-	}
-
-	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
-
+func checkNilErr(err error) {
 	if err != nil {
-		return "", err
+		log.Fatal(err)
 	}
+}
 
+func SendPrompt(promptString, modelName, inputString string) (string, error) {
+	ctx := context.Background()
+	err := godotenv.Load()
+	checkNilErr(err)
+
+	apiKey := internal.GetAPIKey()
+
+	client, err := genai.NewClient(ctx, option.WithAPIKey(string(apiKey)))
+	checkNilErr(err)
 	defer client.Close()
 
 	model := client.GenerativeModel(modelName)
@@ -38,11 +39,7 @@ func SendPrompt(promptString, modelName, inputString string, apiKeyValidate *str
 	}
 
 	resp, err := model.GenerateContent(ctx, genai.Text(fullPrompt))
-	if err != nil {
-		return "", err
-	} else if apiKeyValidate != nil {
-		return "", nil
-	}
+	checkNilErr(err)
 
 	if resp != nil && len(resp.Candidates) > 0 {
 		promptAns, ok := resp.Candidates[0].Content.Parts[0].(genai.Text)

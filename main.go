@@ -47,12 +47,11 @@ func checkNilErr(err error) {
 
 func main() {
 	app := tview.NewApplication().EnableMouse(true)
-	apiKey := internal.GetAPIKey()
 
-	if !api.CheckCredentials(string(apiKey)) {
+	if !api.CheckCredentials(FileLocation, nil) {
 		credentialModal := panes.CreateCredentialModal(app, func(apiInput string) {
 
-			if ok := api.CheckCredentials(apiInput); !ok {
+			if ok := api.CheckCredentials("", &apiInput); !ok {
 				app.Stop()
 				log.Println("Invalid API key. Please try again.")
 				return
