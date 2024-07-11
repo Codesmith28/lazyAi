@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"os"
 	"path/filepath"
@@ -46,6 +47,15 @@ func checkNilErr(err error) {
 }
 
 func main() {
+
+	detachedMode := flag.Bool("d", false, "Run in detached mode")
+	defaultPrompt := flag.String("p", "", "Set the default prompt")
+	flag.Parse()
+
+	if *defaultPrompt != "" {
+		PromptText.PromptString = *defaultPrompt
+	}
+
 	app := tview.NewApplication().EnableMouse(true)
 
 	if !api.CheckCredentials(FileLocation, nil) {
@@ -59,7 +69,12 @@ func main() {
 
 			err := os.WriteFile(FileLocation, []byte(apiInput), 0644)
 			checkNilErr(err)
-			setupMainUI(app)
+
+			if *detachedMode {
+				runDetachedMode()
+			} else {
+				setupMainUI(app)
+			}
 		})
 
 		app.SetRoot(credentialModal, true)
@@ -67,8 +82,19 @@ func main() {
 		err := app.Run()
 		checkNilErr(err)
 	} else {
-		setupMainUI(app)
+		if *detachedMode {
+			runDetachedMode()
+		} else {
+			setupMainUI(app)
+		}
 	}
+}
+
+func runDetachedMode() {
+	panes.StartClipboardMonitoring(nil)
+	panes.ApplySystemNavConfig(nil)
+
+	select {}
 }
 
 func setupMainUI(app *tview.Application) {
