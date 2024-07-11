@@ -13,18 +13,6 @@ import (
 )
 
 var (
-	ModelsPane      = panes.ModelsPane
-	OutputPane      = panes.OutputPane
-	PromptPane      = panes.PromptPane
-	KeybindingsPane = panes.KeybindingsPane
-	InputPane       = panes.InputPane
-
-	ModelList  = panes.ModelList
-	PromptText = panes.PromptText
-	InputText  = panes.InputText
-	OutputText = panes.OutputText
-	Selected   = panes.Selected
-
 	FileLocation    string
 	HistoryLocation string
 )
@@ -59,7 +47,9 @@ func main() {
 
 			err := os.WriteFile(FileLocation, []byte(apiInput), 0644)
 			checkNilErr(err)
-			setupMainUI(app)
+
+			log.Println("Starting clipboard monitoring after credential input.")
+			panes.SetupMainUI(app, HistoryLocation)
 		})
 
 		app.SetRoot(credentialModal, true)
@@ -67,25 +57,7 @@ func main() {
 		err := app.Run()
 		checkNilErr(err)
 	} else {
-		setupMainUI(app)
+		log.Println("Starting clipboard monitoring with existing credentials.")
+		panes.SetupMainUI(app, HistoryLocation)
 	}
-}
-
-func setupMainUI(app *tview.Application) {
-	group2 := panes.CreateGroup2(panes.HistoryPane, ModelsPane)
-	group4 := panes.CreateGroup4(InputPane, PromptPane)
-	group3 := panes.CreateGroup3(group4, OutputPane)
-	group1 := panes.CreateGroup1(group2, group3)
-	mainFlex := panes.CreateMainFlex(group1, KeybindingsPane)
-
-	panes.SetupGlobalKeybindings(app, HistoryLocation)
-	panes.InitHistoryPane(HistoryLocation)
-
-	app.SetRoot(mainFlex, true)
-
-	panes.StartClipboardMonitoring(app)
-	panes.ApplySystemNavConfig(app)
-
-	err := app.Run()
-	checkNilErr(err)
 }

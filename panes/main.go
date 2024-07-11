@@ -1,6 +1,15 @@
 package panes
 
-import "log"
+import (
+	"log"
+
+	"github.com/gdamore/tcell/v2"
+)
+
+var (
+	ActiveBorderCol   = tcell.ColorGreen
+	InactiveBorderCol = tcell.ColorDarkGray
+)
 
 func UpdateInputPane() {
 	InputPane.SetText(InputText.InputString)
