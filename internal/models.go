@@ -1,5 +1,7 @@
 package internal
 
+import "github.com/gdamore/tcell/v2"
+
 type Query struct {
 	InputString   string
 	PromptString  string
@@ -32,4 +34,13 @@ type Model struct {
 
 type Output struct {
 	OutputString string
+}
+
+type Theme struct {
+	ActiveBorderCol   tcell.Color
+	InactiveBorderCol tcell.Color
+	PrimaryTextCol    tcell.Color
+	SecondaryTextCol  tcell.Color
+	TertiaryTextCol   tcell.Color
+	TitleCol          tcell.Color
 }

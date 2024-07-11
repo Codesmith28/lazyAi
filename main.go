@@ -38,7 +38,6 @@ func main() {
 
 	if !api.CheckCredentials(FileLocation, nil) {
 		credentialModal := panes.CreateCredentialModal(app, func(apiInput string) {
-
 			if ok := api.CheckCredentials("", &apiInput); !ok {
 				app.Stop()
 				log.Println("Invalid API key. Please try again.")
