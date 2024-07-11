@@ -1,6 +1,7 @@
 package panes
 
 import (
+	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -19,7 +20,9 @@ func init() {
 }
 
 // SetupGlobalKeybindings sets up global keybindings to focus on each pane.
-func SetupGlobalKeybindings(app *tview.Application, HistoryLocation string) {
+func SetupGlobalKeybindings(app *tview.Application) {
+	HistoryLocation := internal.GetHistoryLocation()
+
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Modifiers()&tcell.ModAlt != 0 {
 			switch event.Key() {

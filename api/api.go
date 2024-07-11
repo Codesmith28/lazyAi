@@ -22,13 +22,14 @@ func SendPrompt(promptString, modelName, inputString string) (string, error) {
 	apiKey := internal.GetAPIKey()
 
 	client, err := genai.NewClient(ctx, option.WithAPIKey(string(apiKey)))
-	checkNilErr(err)
+	if err != nil {
+		return "", fmt.Errorf("failed to create client: %w", err)
+	}
 	defer client.Close()
 
 	model := client.GenerativeModel(modelName)
 
 	var fullPrompt string
-
 	if promptString != "" {
 		fullPrompt = fmt.Sprintf("Context: %s \n\n Question: %s", promptString, inputString)
 	} else {
@@ -36,15 +37,18 @@ func SendPrompt(promptString, modelName, inputString string) (string, error) {
 	}
 
 	resp, err := model.GenerateContent(ctx, genai.Text(fullPrompt))
-	checkNilErr(err)
-
-	if resp != nil && len(resp.Candidates) > 0 {
-		promptAns, ok := resp.Candidates[0].Content.Parts[0].(genai.Text)
-		if !ok {
-			return "", fmt.Errorf("unexpected response format")
-		}
-		return string(promptAns), nil
+	if err != nil {
+		return "", fmt.Errorf("failed to generate content: %w", err)
 	}
 
-	return "", fmt.Errorf("no response generated")
+	if resp == nil || len(resp.Candidates) == 0 {
+		return "", fmt.Errorf("no response generated")
+	}
+
+	promptAns, ok := resp.Candidates[0].Content.Parts[0].(genai.Text)
+	if !ok {
+		return "", fmt.Errorf("unexpected response format")
+	}
+
+	return string(promptAns), nil
 }

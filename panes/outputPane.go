@@ -56,9 +56,11 @@ func HandlePromptChange(
 		panic(err)
 	}
 
-	app.QueueUpdateDraw(func() {
-		OutputPane.SetText(content)
-	})
+	if app != nil {
+		app.QueueUpdateDraw(func() {
+			OutputPane.SetText(content)
+		})
+	}
 
 	clipboard.Mu.Lock()
 	OutputText.OutputString = content

@@ -36,22 +36,29 @@ func CreateMainFlex(group1 *tview.Flex, keybindingsPane *tview.TextView) *tview.
 		AddItem(keybindingsPane, 1, 0, false)
 }
 
-func SetupMainUI(app *tview.Application, HistoryLocation string) {
-	group2 := CreateGroup2(HistoryPane, ModelsPane)
-	group4 := CreateGroup4(InputPane, PromptPane)
-	group3 := CreateGroup3(group4, OutputPane)
-	group1 := CreateGroup1(group2, group3)
-	mainFlex := CreateMainFlex(group1, KeybindingsPane)
+func SetupMainUI(app *tview.Application) {
+	if app == nil {
+		StartClipboardMonitoring(nil)
+		ApplySystemNavConfig(nil)
 
-	SetupGlobalKeybindings(app, HistoryLocation)
-	InitHistoryPane(HistoryLocation)
+		select {}
+	} else {
+		group2 := CreateGroup2(HistoryPane, ModelsPane)
+		group4 := CreateGroup4(InputPane, PromptPane)
+		group3 := CreateGroup3(group4, OutputPane)
+		group1 := CreateGroup1(group2, group3)
+		mainFlex := CreateMainFlex(group1, KeybindingsPane)
 
-	app.SetRoot(mainFlex, true)
-	log.Println("Running app for main UI.")
+		SetupGlobalKeybindings(app)
+		InitHistoryPane()
 
-	StartClipboardMonitoring(app)
-	ApplySystemNavConfig(app)
+		app.SetRoot(mainFlex, true)
+		log.Println("Running app for main UI.")
 
-	err := app.Run()
-	checkNilErr(err)
+		StartClipboardMonitoring(app)
+		ApplySystemNavConfig(app)
+
+		err := app.Run()
+		checkNilErr(err)
+	}
 }
