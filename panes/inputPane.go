@@ -49,10 +49,13 @@ func StartClipboardMonitoring(app *tview.Application) {
 			text, err := clipboard.GetClipboardText()
 			checkNilErr(err)
 			if text != lastPublishedText {
-				app.QueueUpdateDraw(func() {
-					InputText.InputString = text
-					UpdateInputPane()
-				})
+
+				if app != nil {
+					app.QueueUpdateDraw(func() {
+						InputText.InputString = text
+						UpdateInputPane()
+					})
+				}
 
 				promptString := PromptText.PromptString
 				selectedModel := Selected.SelectedModel

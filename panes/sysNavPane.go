@@ -23,7 +23,9 @@ func ApplySystemNavConfig(app *tview.Application) {
 
 		go func() {
 			<-mQuit.ClickedCh
-			app.Stop()
+			if app != nil {
+				app.Stop()
+			}
 			systray.Quit()
 		}()
 
@@ -31,7 +33,9 @@ func ApplySystemNavConfig(app *tview.Application) {
 		signal.Notify(c, os.Interrupt)
 		go func() {
 			for range c {
-				app.Stop()
+				if app != nil {
+					app.Stop()
+				}
 				systray.Quit()
 				os.Exit(0)
 			}

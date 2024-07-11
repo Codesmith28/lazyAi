@@ -4,6 +4,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
+	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/Codesmith28/cheatScript/internal/history"
 )
 
@@ -12,7 +13,9 @@ var (
 	History     = &history.History{}
 )
 
-func InitHistoryPane(historyLocation string) {
+func InitHistoryPane() {
+
+	historyLocation := internal.GetHistoryLocation()
 	loadHistory(historyLocation)
 
 	HistoryPane.
