@@ -21,3 +21,14 @@ to view your logs:
 ```
 tail -f app.log
 ```
+Run the project in detached mode:
+
+```
+go run main.go -d
+```
+
+Add default prompt (helpful while running in detached mode):
+
+```
+go run main.go -d -p "Your default prompt"
+```
