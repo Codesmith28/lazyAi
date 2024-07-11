@@ -38,7 +38,7 @@ func SetupGlobalKeybindings(app *tview.Application, HistoryLocation string) {
 					app.SetFocus(HistoryPane)
 					return nil
 				case '5':
-					app.SetFocus(ModelsPane)
+					app.SetFocus(ModelList)
 					return nil
 				case 'S', 's':
 					saveCurrentState(HistoryLocation)

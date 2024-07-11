@@ -8,9 +8,8 @@ import (
 )
 
 var (
-	ModelsPane = tview.NewFlex()
-	ModelList  = tview.NewList()
-	Selected   *internal.Model
+	ModelList = tview.NewList()
+	Selected  *internal.Model
 )
 
 var availableModels = map[string]*internal.Model{
@@ -44,6 +43,4 @@ func init() {
 		}
 		return event
 	})
-
-	ModelsPane.AddItem(ModelList, 0, 1, true)
 }
