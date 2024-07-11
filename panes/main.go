@@ -11,9 +11,9 @@ import (
 
 var Theme = internal.Theme{
 	ActiveBorderCol:   tcell.ColorGreen,
-	InactiveBorderCol: tcell.ColorBlue,
+	InactiveBorderCol: tcell.ColorWhite,
 	PrimaryTextCol:    tcell.ColorWhite,
-	SecondaryTextCol:  tcell.ColorGray,
+	SecondaryTextCol:  tcell.ColorBlue,
 	TitleCol:          tcell.ColorYellow,
 }
 
