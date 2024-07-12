@@ -60,11 +60,11 @@ func SetupMainUILayout(app *tview.Application) {
 		// apply theme to all panes:
 		for _, pane := range allPanes {
 			ApplyTheme(pane)
-			if pane.HasFocus() {
-				ApplyFocusedStyle(pane)
-			} else {
-				ApplyUnfocusedStyle(pane)
-			}
+			// if pane.HasFocus() {
+			// 	ApplyFocusedStyle(pane)
+			// } else {
+			// 	ApplyUnfocusedStyle(pane)
+			// }
 		}
 
 		app.SetRoot(mainFlex, true)
