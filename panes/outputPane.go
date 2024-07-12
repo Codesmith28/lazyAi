@@ -1,15 +1,12 @@
 package panes
 
 import (
-	"strings"
-
 	"github.com/Codesmith28/cheatScript/api"
 	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/Codesmith28/cheatScript/internal/clipboard"
+	"github.com/charmbracelet/glamour"
 	"github.com/gdamore/tcell/v2"
 	"github.com/getlantern/systray"
-	"github.com/gomarkdown/markdown"
-	"github.com/gomarkdown/markdown/parser"
 	"github.com/rivo/tview"
 )
 
@@ -75,9 +72,9 @@ func HandlePromptChange(
 	}
 
 	clipboard.Mu.Lock()
-	OutputText.OutputString = content
-	clipboard.OutputText = content
-	err = clipboard.SetClipboardText(content)
+	OutputText.OutputString = styledContent
+	clipboard.OutputText = styledContent
+	err = clipboard.SetClipboardText(styledContent)
 
 	if err != nil {
 		panic(err)
@@ -89,37 +86,14 @@ func HandlePromptChange(
 }
 
 func markdownToTview(md string) string {
-	// Parse the markdown
-	extensions := parser.NoExtensions
-	p := parser.NewWithExtensions(extensions)
-	html := markdown.ToHTML([]byte(md), p, nil)
 
-	// Convert HTML to tview format
-	return htmlToTview(string(html))
-}
+	formattedOutput, err := glamour.Render(md, "dark")
 
-func htmlToTview(html string) string {
-	html = strings.ReplaceAll(html, "<h1>", "[#FFFF00::b]")
-	html = strings.ReplaceAll(html, "</h1>", "[-::-]")
-	html = strings.ReplaceAll(html, "<h2>", "[#00FF00::b]")
-	html = strings.ReplaceAll(html, "</h2>", "[-::-]")
-	html = strings.ReplaceAll(html, "<p>", "")
-	html = strings.ReplaceAll(html, "</p>", "")
-	html = strings.ReplaceAll(html, "<strong>", "[::b]")
-	html = strings.ReplaceAll(html, "</strong>", "[::-]")
-	html = strings.ReplaceAll(html, "<em>", "[::i]")
-	html = strings.ReplaceAll(html, "</em>", "[::-]")
-	html = strings.ReplaceAll(html, "<code>", "[#4CAF50]")
-	html = strings.ReplaceAll(html, "</code>", "[-]")
-	html = strings.ReplaceAll(html, "<pre>", "[#4CAF50]")
-	html = strings.ReplaceAll(html, "</pre>", "[-]")
-	html = strings.ReplaceAll(html, "<ul>", "")
-	html = strings.ReplaceAll(html, "</ul>", "")
-	html = strings.ReplaceAll(html, "<li>", "• ")
-	html = strings.ReplaceAll(html, "</li>", "")
-	html = strings.ReplaceAll(html, "<ol>", "")
-	html = strings.ReplaceAll(html, "</ol>", "")
-	html = strings.ReplaceAll(html, "&rsquo;", "'")
+	if err != nil {
+		panic(err)
+	}
 
-	return html
+	finalOutput := tview.TranslateANSI(formattedOutput)
+
+	return finalOutput
 }
