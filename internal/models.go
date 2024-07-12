@@ -1,5 +1,7 @@
 package internal
 
+import "github.com/gdamore/tcell/v2"
+
 type Query struct {
 	InputString   string
 	PromptString  string
@@ -13,11 +15,13 @@ type HistoryItem struct {
 }
 
 type History struct {
+	HistoryMap  map[string]HistoryItem
 	HistoryList []HistoryItem
 }
 
 type Prompt struct {
 	PromptString string
+	Model        string
 }
 
 type Input struct {
@@ -30,4 +34,11 @@ type Model struct {
 
 type Output struct {
 	OutputString string
+}
+
+type Theme struct {
+	ActiveBorderCol   tcell.Color
+	InactiveBorderCol tcell.Color
+	SecondaryCol      tcell.Color
+	TitleCol          tcell.Color
 }

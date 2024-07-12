@@ -2,37 +2,53 @@ package api
 
 import (
 	"context"
-	"os"
+	"fmt"
+	"log"
 
+	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/google/generative-ai-go/genai"
-	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
 )
 
-func SendPrompt(prompt string) (string, error) {
-	ctx := context.Background()
-	err := godotenv.Load()
-
+func checkNilErr(err error) {
 	if err != nil {
-		return "", err
+		log.Fatal(err)
 	}
+}
 
-	client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("API_KEY")))
+func SendPrompt(promptString, modelName, inputString string) (string, error) {
+	ctx := context.Background()
+
+	apiKey := internal.GetAPIKey()
+
+	client, err := genai.NewClient(ctx, option.WithAPIKey(string(apiKey)))
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to create client: %w", err)
 	}
 	defer client.Close()
 
-	model := client.GenerativeModel("gemini-1.5-flash")
-	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
+	model := client.GenerativeModel(modelName)
+
+	var fullPrompt string
+	if promptString != "" {
+		fullPrompt = fmt.Sprintf("Context: %s \n\n Question: %s", promptString, inputString)
+	} else {
+		fullPrompt = fmt.Sprintf("Question: %s ", inputString)
+	}
+
+	resp, err := model.GenerateContent(ctx, genai.Text(fullPrompt))
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to generate content: %w", err)
 	}
 
-	if resp != nil && len(resp.Candidates) > 0 {
-		promptAns, _ := resp.Candidates[0].Content.Parts[0].(genai.Text)
-		return string(promptAns), nil
+	if resp == nil || len(resp.Candidates) == 0 {
+		return "", fmt.Errorf("no response generated")
 	}
 
-	return "", nil
+	promptAns, ok := resp.Candidates[0].Content.Parts[0].(genai.Text)
+	if !ok {
+		return "", fmt.Errorf("unexpected response format")
+	}
+
+	return string(promptAns), nil
 }

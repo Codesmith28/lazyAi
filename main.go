@@ -1,45 +1,83 @@
 package main
 
 import (
+	"flag"
+	"log"
+	"os"
+	"path/filepath"
+
 	"github.com/rivo/tview"
 
+	"github.com/Codesmith28/cheatScript/api"
+	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/Codesmith28/cheatScript/panes"
 )
 
 var (
-	HistoryPane     = panes.HistoryPane
-	ModelsPane      = panes.ModelsPane
-	OutputPane      = panes.OutputPane
-	PromptPane      = panes.PromptPane
-	KeybindingsPane = panes.KeybindingsPane
-	InputPane       = panes.InputPane
-
-	ModelList  = panes.ModelList
-	PromptText = panes.PromptText
-	InputText  = panes.InputText
+	FileLocation    string
+	HistoryLocation string
+	PromptText      = panes.PromptText
 )
+
+func init() {
+	FileLocation = internal.GetFileLocation()
+	HistoryLocation = internal.GetHistoryLocation()
+
+	err := os.MkdirAll(filepath.Dir(FileLocation), os.ModePerm)
+	checkNilErr(err)
+	err = os.MkdirAll(filepath.Dir(HistoryLocation), os.ModePerm)
+	checkNilErr(err)
+}
 
 func checkNilErr(err error) {
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
+	}
+}
+
+func setupUI(detachedMode *bool, app *tview.Application) {
+	if *detachedMode {
+		if app != nil {
+			app.Stop()
+		}
+		panes.SetupMainUILayout(nil)
+	} else {
+		panes.SetupMainUILayout(app)
 	}
 }
 
 func main() {
+	detachedMode := flag.Bool("d", false, "Run in detached mode")
+	defaultPrompt := flag.String("p", "", "Set the default prompt")
+	flag.Parse()
+
+	if *defaultPrompt != "" {
+		PromptText.PromptString = *defaultPrompt
+	}
+
 	app := tview.NewApplication().EnableMouse(true)
-	panes.StartClipboardMonitoring(app, OutputPane)
 
-	// Create layout groups
-	group2 := panes.CreateGroup2(HistoryPane, PromptPane)
-	group4 := panes.CreateGroup4(InputPane, ModelsPane)
-	group3 := panes.CreateGroup3(group4, OutputPane)
-	group1 := panes.CreateGroup1(group2, group3)
-	mainFlex := panes.CreateMainFlex(group1, KeybindingsPane)
+	if !api.CheckCredentials(FileLocation, nil) {
+		credentialModal := panes.CreateCredentialModal(app, func(apiInput string) {
+			if ok := api.CheckCredentials("", &apiInput); !ok {
+				app.Stop()
+				log.Println("Invalid API key. Please try again.")
+				return
+			}
 
-	// Set up global KeybindingsPane
-	panes.SetupGlobalKeybindings(app)
+			err := os.WriteFile(FileLocation, []byte(apiInput), 0644)
+			checkNilErr(err)
 
-	// Set up the application root
-	err := app.SetRoot(mainFlex, true).Run()
-	checkNilErr(err)
+			log.Println("Starting clipboard monitoring after credential input.")
+			setupUI(detachedMode, app)
+		})
+
+		app.SetRoot(credentialModal, true)
+
+		err := app.Run()
+		checkNilErr(err)
+	} else {
+		log.Println("Starting clipboard monitoring with existing credentials.")
+		setupUI(detachedMode, app)
+	}
 }

@@ -2,12 +2,26 @@ package panes
 
 import (
 	"github.com/gdamore/tcell/v2"
+	"github.com/getlantern/systray"
 	"github.com/rivo/tview"
+
+	"github.com/Codesmith28/cheatScript/api"
+	"github.com/Codesmith28/cheatScript/internal"
+	"github.com/Codesmith28/cheatScript/internal/clipboard"
 )
 
-var OutputPane = tview.NewTextView()
+var (
+	OutputPane = tview.NewTextView()
+	OutputText = &internal.Output{}
+)
 
 func init() {
+	OutputText = &internal.Output{
+		OutputString: "",
+	}
+
+	OutputPane.SetText(OutputText.OutputString)
+
 	OutputPane.
 		SetWrap(true).
 		SetScrollable(true).
@@ -25,4 +39,39 @@ func init() {
 			}
 			return event
 		})
+}
+
+func HandlePromptChange(
+	query *internal.Query,
+	clipboard *clipboard.Clipboard,
+	app *tview.Application,
+) {
+	content, err := api.SendPrompt(
+		query.PromptString,
+		query.SelectedModel,
+		query.InputString,
+	)
+
+	if err != nil {
+		panic(err)
+	}
+
+	if app != nil {
+		app.QueueUpdateDraw(func() {
+			OutputPane.SetText(content)
+		})
+	}
+
+	clipboard.Mu.Lock()
+	OutputText.OutputString = content
+	clipboard.OutputText = content
+	err = clipboard.SetClipboardText(content)
+
+	if err != nil {
+		panic(err)
+	}
+
+	clipboard.Mu.Unlock()
+
+	systray.SetTooltip("Ready!!")
 }

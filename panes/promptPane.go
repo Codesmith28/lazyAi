@@ -14,7 +14,6 @@ var (
 
 func init() {
 	PromptText = &internal.Prompt{}
-
 	PromptPane.SetText(PromptText.PromptString, true).
 		SetWrap(true).
 		SetBorder(true).
@@ -26,4 +25,8 @@ func init() {
 			}
 			return event
 		})
+
+	PromptPane.SetChangedFunc(func() {
+		PromptText.PromptString = PromptPane.GetText()
+	})
 }
