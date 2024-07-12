@@ -1,21 +1,23 @@
 package panes
 
 import (
-	"github.com/gdamore/tcell/v2"
-	"github.com/getlantern/systray"
-	"github.com/rivo/tview"
-
 	"github.com/Codesmith28/cheatScript/api"
 	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/Codesmith28/cheatScript/internal/clipboard"
+	"github.com/charmbracelet/glamour"
+	"github.com/gdamore/tcell/v2"
+	"github.com/getlantern/systray"
+	"github.com/rivo/tview"
 )
 
 var (
-	OutputPane = tview.NewTextView()
+	OutputPane *tview.TextView
 	OutputText = &internal.Output{}
 )
 
 func init() {
+	OutputPane = tview.NewTextView()
+
 	OutputText = &internal.Output{
 		OutputString: "",
 	}
@@ -23,22 +25,28 @@ func init() {
 	OutputPane.SetText(OutputText.OutputString)
 
 	OutputPane.
+		SetDynamicColors(true).
+		SetRegions(true).
 		SetWrap(true).
 		SetScrollable(true).
-		SetBorder(true).
+		SetBorder(true)
+
+	OutputPane.
 		SetTitle(" Output ").
-		SetBorderPadding(1, 1, 2, 2).
-		SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-			switch event.Key() {
-			case tcell.KeyUp:
-				currRow, _ := OutputPane.GetScrollOffset()
-				OutputPane.ScrollTo(currRow-1, 0)
-			case tcell.KeyDown:
-				currRow, _ := OutputPane.GetScrollOffset()
-				OutputPane.ScrollTo(currRow+1, 0)
+		SetBorderPadding(1, 1, 2, 2)
+
+	OutputPane.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Key() == tcell.KeyUp {
+			row, _ := OutputPane.GetScrollOffset()
+			if row > 0 {
+				OutputPane.ScrollTo(row-1, 0)
 			}
-			return event
-		})
+		} else if event.Key() == tcell.KeyDown {
+			row, _ := OutputPane.GetScrollOffset()
+			OutputPane.ScrollTo(row+1, 0)
+		}
+		return event
+	})
 }
 
 func HandlePromptChange(
@@ -51,14 +59,14 @@ func HandlePromptChange(
 		query.SelectedModel,
 		query.InputString,
 	)
-
 	if err != nil {
 		panic(err)
 	}
 
 	if app != nil {
+		styledContent := markdownToTview(content)
 		app.QueueUpdateDraw(func() {
-			OutputPane.SetText(content)
+			OutputPane.SetText(styledContent)
 		})
 	}
 
@@ -74,4 +82,17 @@ func HandlePromptChange(
 	clipboard.Mu.Unlock()
 
 	systray.SetTooltip("Ready!!")
+}
+
+func markdownToTview(md string) string {
+
+	formattedOutput, err := glamour.Render(md, "dark")
+
+	if err != nil {
+		panic(err)
+	}
+
+	finalOutput := tview.TranslateANSI(formattedOutput)
+
+	return finalOutput
 }
