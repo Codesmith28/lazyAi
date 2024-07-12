@@ -39,8 +39,6 @@ type Output struct {
 type Theme struct {
 	ActiveBorderCol   tcell.Color
 	InactiveBorderCol tcell.Color
-	PrimaryTextCol    tcell.Color
-	SecondaryTextCol  tcell.Color
-	TertiaryTextCol   tcell.Color
+	SecondaryCol      tcell.Color
 	TitleCol          tcell.Color
 }

@@ -47,7 +47,6 @@ func setupUI(detachedMode *bool, app *tview.Application) {
 }
 
 func main() {
-
 	detachedMode := flag.Bool("d", false, "Run in detached mode")
 	defaultPrompt := flag.String("p", "", "Set the default prompt")
 	flag.Parse()
