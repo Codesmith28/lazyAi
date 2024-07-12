@@ -63,9 +63,8 @@ func HandlePromptChange(
 		panic(err)
 	}
 
-	styledContent := markdownToTview(content)
-
 	if app != nil {
+		styledContent := markdownToTview(content)
 		app.QueueUpdateDraw(func() {
 			OutputPane.SetText(styledContent)
 		})
