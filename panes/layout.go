@@ -36,7 +36,7 @@ func CreateMainFlex(group1 *tview.Flex, keybindingsPane *tview.TextView) *tview.
 		AddItem(keybindingsPane, 1, 0, false)
 }
 
-func SetupMainUI(app *tview.Application) {
+func SetupMainUILayout(app *tview.Application) {
 	if app == nil {
 		StartClipboardMonitoring(nil)
 		ApplySystemNavConfig(nil)

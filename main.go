@@ -40,9 +40,9 @@ func setupUI(detachedMode *bool, app *tview.Application) {
 		if app != nil {
 			app.Stop()
 		}
-		panes.SetupMainUI(nil)
+		panes.SetupMainUILayout(nil)
 	} else {
-		panes.SetupMainUI(app)
+		panes.SetupMainUILayout(app)
 	}
 }
 
