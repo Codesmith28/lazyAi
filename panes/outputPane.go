@@ -72,9 +72,9 @@ func HandlePromptChange(
 	}
 
 	clipboard.Mu.Lock()
-	OutputText.OutputString = styledContent
-	clipboard.OutputText = styledContent
-	err = clipboard.SetClipboardText(styledContent)
+	OutputText.OutputString = content
+	clipboard.OutputText = content
+	err = clipboard.SetClipboardText(content)
 
 	if err != nil {
 		panic(err)
