@@ -1,21 +1,26 @@
 package panes
 
 import (
-	"github.com/gdamore/tcell/v2"
-	"github.com/getlantern/systray"
-	"github.com/rivo/tview"
+	"strings"
 
 	"github.com/Codesmith28/cheatScript/api"
 	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/Codesmith28/cheatScript/internal/clipboard"
+	"github.com/gdamore/tcell/v2"
+	"github.com/getlantern/systray"
+	"github.com/gomarkdown/markdown"
+	"github.com/gomarkdown/markdown/parser"
+	"github.com/rivo/tview"
 )
 
 var (
-	OutputPane = tview.NewTextView()
+	OutputPane *tview.TextView
 	OutputText = &internal.Output{}
 )
 
 func init() {
+	OutputPane = tview.NewTextView()
+
 	OutputText = &internal.Output{
 		OutputString: "",
 	}
@@ -23,22 +28,28 @@ func init() {
 	OutputPane.SetText(OutputText.OutputString)
 
 	OutputPane.
+		SetDynamicColors(true).
+		SetRegions(true).
 		SetWrap(true).
 		SetScrollable(true).
-		SetBorder(true).
+		SetBorder(true)
+
+	OutputPane.
 		SetTitle(" Output ").
-		SetBorderPadding(1, 1, 2, 2).
-		SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-			switch event.Key() {
-			case tcell.KeyUp:
-				currRow, _ := OutputPane.GetScrollOffset()
-				OutputPane.ScrollTo(currRow-1, 0)
-			case tcell.KeyDown:
-				currRow, _ := OutputPane.GetScrollOffset()
-				OutputPane.ScrollTo(currRow+1, 0)
+		SetBorderPadding(1, 1, 2, 2)
+
+	OutputPane.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Key() == tcell.KeyUp {
+			row, _ := OutputPane.GetScrollOffset()
+			if row > 0 {
+				OutputPane.ScrollTo(row-1, 0)
 			}
-			return event
-		})
+		} else if event.Key() == tcell.KeyDown {
+			row, _ := OutputPane.GetScrollOffset()
+			OutputPane.ScrollTo(row+1, 0)
+		}
+		return event
+	})
 }
 
 func HandlePromptChange(
@@ -51,14 +62,15 @@ func HandlePromptChange(
 		query.SelectedModel,
 		query.InputString,
 	)
-
 	if err != nil {
 		panic(err)
 	}
 
+	styledContent := markdownToTview(content)
+
 	if app != nil {
 		app.QueueUpdateDraw(func() {
-			OutputPane.SetText(content)
+			OutputPane.SetText(styledContent)
 		})
 	}
 
@@ -74,4 +86,40 @@ func HandlePromptChange(
 	clipboard.Mu.Unlock()
 
 	systray.SetTooltip("Ready!!")
+}
+
+func markdownToTview(md string) string {
+	// Parse the markdown
+	extensions := parser.NoExtensions
+	p := parser.NewWithExtensions(extensions)
+	html := markdown.ToHTML([]byte(md), p, nil)
+
+	// Convert HTML to tview format
+	return htmlToTview(string(html))
+}
+
+func htmlToTview(html string) string {
+	html = strings.ReplaceAll(html, "<h1>", "[#FFFF00::b]")
+	html = strings.ReplaceAll(html, "</h1>", "[-::-]")
+	html = strings.ReplaceAll(html, "<h2>", "[#00FF00::b]")
+	html = strings.ReplaceAll(html, "</h2>", "[-::-]")
+	html = strings.ReplaceAll(html, "<p>", "")
+	html = strings.ReplaceAll(html, "</p>", "")
+	html = strings.ReplaceAll(html, "<strong>", "[::b]")
+	html = strings.ReplaceAll(html, "</strong>", "[::-]")
+	html = strings.ReplaceAll(html, "<em>", "[::i]")
+	html = strings.ReplaceAll(html, "</em>", "[::-]")
+	html = strings.ReplaceAll(html, "<code>", "[#4CAF50]")
+	html = strings.ReplaceAll(html, "</code>", "[-]")
+	html = strings.ReplaceAll(html, "<pre>", "[#4CAF50]")
+	html = strings.ReplaceAll(html, "</pre>", "[-]")
+	html = strings.ReplaceAll(html, "<ul>", "")
+	html = strings.ReplaceAll(html, "</ul>", "")
+	html = strings.ReplaceAll(html, "<li>", "• ")
+	html = strings.ReplaceAll(html, "</li>", "")
+	html = strings.ReplaceAll(html, "<ol>", "")
+	html = strings.ReplaceAll(html, "</ol>", "")
+	html = strings.ReplaceAll(html, "&rsquo;", "'")
+
+	return html
 }
