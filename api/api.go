@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Codesmith28/cheatScript/internal"
 	"github.com/google/generative-ai-go/genai"
 	"google.golang.org/api/option"
+
+	"github.com/Codesmith28/cheatScript/internal"
 )
 
 func checkNilErr(err error) {
