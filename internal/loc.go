@@ -66,11 +66,7 @@ func GetAPIKey() string {
 	return string(apiKey)
 }
 
-func GetNumberOfQueries() int {
-	return 1
-}
-
-func SetNumberOfQueries(numberOfQueries int) {
+func UpdateNumberOfQueries() {
 }
 
 func getDistro() (distro string) {

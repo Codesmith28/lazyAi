@@ -51,5 +51,6 @@ func SendPrompt(promptString, modelName, inputString string) (string, error) {
 		return "", fmt.Errorf("unexpected response format")
 	}
 
+	internal.UpdateNumberOfQueries()
 	return string(promptAns), nil
 }
