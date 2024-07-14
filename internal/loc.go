@@ -61,6 +61,9 @@ func GetAPIKey() string {
 	return string(apiKey)
 }
 
+func UpdateNumberOfQueries() {
+}
+
 func getDistro() (distro string) {
 	filename := "/etc/os-release"
 	file, err := os.Open(filename)
