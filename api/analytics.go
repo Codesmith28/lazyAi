@@ -1,7 +1,5 @@
 package api
 
-// analytics helps us to keep a track of different users and their usage of the application
-
 import (
 	"bytes"
 	"encoding/json"
@@ -14,11 +12,10 @@ import (
 )
 
 var (
-	osType      string
-	hostname    string
-	username    string
 	jsonData    []byte
 	apiEndpoint string
+	request     *http.Request
+	client      *http.Client
 )
 
 type AnalyticReport struct {
@@ -28,18 +25,27 @@ type AnalyticReport struct {
 }
 
 func init() {
-	osType = os.Getenv("OS")
-	hostname, _ = os.Hostname()
-	currentUser, _ := user.Current()
-	username = currentUser.Username
-
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error sending analytic report")
-		return
+		log.Fatal("Error loading .env file: ", err)
 	}
 
+	osType := os.Getenv("OS")
+	hostname, err := os.Hostname()
+	if err != nil {
+		log.Fatal("Error getting hostname: ", err)
+	}
+
+	currentUser, err := user.Current()
+	if err != nil {
+		log.Fatal("Error getting current user: ", err)
+	}
+	username := currentUser.Username
+
 	apiEndpoint = os.Getenv("ANALYTICS_API_ENDPOINT")
+	if apiEndpoint == "" {
+		log.Fatal("ANALYTICS_API_ENDPOINT not set in .env file")
+	}
 
 	report := AnalyticReport{
 		OS:       osType,
@@ -49,32 +55,31 @@ func init() {
 
 	jsonData, err = json.Marshal(report)
 	if err != nil {
-		log.Fatal("Error sending analytic report")
-		return
+		log.Fatal("Error marshalling analytic report: ", err)
 	}
+
+	request, err = http.NewRequest("POST", apiEndpoint, bytes.NewBuffer(jsonData))
+	if err != nil {
+		log.Fatal("Error creating request: ", err)
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+
+	client = &http.Client{}
 }
 
 func SendAnalyticReport() {
-	req, err := http.NewRequest("POST", apiEndpoint, bytes.NewBuffer(jsonData))
-
+	resp, err := client.Do(request)
 	if err != nil {
-		log.Fatal("Error sending analytic report")
-		return
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatal("Error sending analytic report")
+		log.Println("Error sending analytic report: ", err)
 		return
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Fatal("Error sending analytic report")
+		log.Printf("Error sending analytic report: status code %d", resp.StatusCode)
+		return
 	}
 
 	log.Println("Analytic report sent successfully")
