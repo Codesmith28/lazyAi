@@ -1,4 +1,4 @@
-module github.com/Codesmith28/cheatScript
+module github.com/Codesmith28/lazyAi
 
 go 1.22.4
 

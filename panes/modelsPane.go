@@ -4,7 +4,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"github.com/Codesmith28/cheatScript/internal"
+	"github.com/Codesmith28/lazyAi/internal"
 )
 
 var (

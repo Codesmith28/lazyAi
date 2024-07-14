@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/Codesmith28/cheatScript/internal"
+	"github.com/Codesmith28/lazyAi/internal"
 )
 
 type (

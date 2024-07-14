@@ -1,9 +1,9 @@
 package panes
 
 import (
-	"github.com/Codesmith28/cheatScript/api"
-	"github.com/Codesmith28/cheatScript/internal"
-	"github.com/Codesmith28/cheatScript/internal/clipboard"
+	"github.com/Codesmith28/lazyAi/api"
+	"github.com/Codesmith28/lazyAi/internal"
+	"github.com/Codesmith28/lazyAi/internal/clipboard"
 	"github.com/charmbracelet/glamour"
 	"github.com/gdamore/tcell/v2"
 	"github.com/getlantern/systray"

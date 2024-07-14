@@ -8,9 +8,9 @@ import (
 
 	"github.com/rivo/tview"
 
-	"github.com/Codesmith28/cheatScript/api"
-	"github.com/Codesmith28/cheatScript/internal"
-	"github.com/Codesmith28/cheatScript/panes"
+	"github.com/Codesmith28/lazyAi/api"
+	"github.com/Codesmith28/lazyAi/internal"
+	"github.com/Codesmith28/lazyAi/panes"
 )
 
 var (

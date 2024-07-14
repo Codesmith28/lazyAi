@@ -1,7 +1,7 @@
 package panes
 
 import (
-	"github.com/Codesmith28/cheatScript/internal"
+	"github.com/Codesmith28/lazyAi/internal"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )

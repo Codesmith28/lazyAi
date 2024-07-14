@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Codesmith28/cheatScript/internal"
+	"github.com/Codesmith28/lazyAi/internal"
 	"github.com/google/generative-ai-go/genai"
 	"google.golang.org/api/option"
 )
