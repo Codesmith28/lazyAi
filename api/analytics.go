@@ -14,9 +14,11 @@ import (
 )
 
 var (
-	osType   string
-	hostname string
-	username string
+	osType      string
+	hostname    string
+	username    string
+	jsonData    []byte
+	apiEndpoint string
 )
 
 type AnalyticReport struct {
@@ -30,17 +32,14 @@ func init() {
 	hostname, _ = os.Hostname()
 	currentUser, _ := user.Current()
 	username = currentUser.Username
-}
 
-func SendAnalyticReport() {
-	// Send an analytic report to the server
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error sending analytic report")
 		return
 	}
 
-	apiEndpoint := os.Getenv("ANALYTICS_API_ENDPOINT")
+	apiEndpoint = os.Getenv("ANALYTICS_API_ENDPOINT")
 
 	report := AnalyticReport{
 		OS:       osType,
@@ -48,12 +47,14 @@ func SendAnalyticReport() {
 		Username: username,
 	}
 
-	jsonData, err := json.Marshal(report)
+	jsonData, err = json.Marshal(report)
 	if err != nil {
 		log.Fatal("Error sending analytic report")
 		return
 	}
+}
 
+func SendAnalyticReport() {
 	req, err := http.NewRequest("POST", apiEndpoint, bytes.NewBuffer(jsonData))
 
 	if err != nil {
