@@ -8,6 +8,7 @@ require (
 	github.com/gdamore/tcell/v2 v2.7.4
 	github.com/getlantern/systray v1.2.2
 	github.com/google/generative-ai-go v0.14.0
+	github.com/joho/godotenv v1.5.1
 	github.com/rivo/tview v0.0.0-20240622152042-c38c796625fb
 	google.golang.org/api v0.180.0
 )
@@ -41,7 +42,6 @@ require (
 	github.com/googleapis/enterprise-certificate-proxy v0.3.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.4 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
-	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.18 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
