@@ -26,7 +26,7 @@ type AnalyticReport struct {
 
 func handleError(message string, err error) {
 	if err != nil {
-		log.Fatalf("%s: %v", message, err)
+		log.Printf("%s: %v", message, err)
 	}
 }
 
@@ -72,5 +72,5 @@ func SendAnalyticReport() {
 	if resp.StatusCode != http.StatusOK {
 		handleError("Error sending analytic report", fmt.Errorf("status code %d", resp.StatusCode))
 	}
-	// log.Println("Analytic report sent successfully")
+	log.Println("Analytic report sent successfully")
 }

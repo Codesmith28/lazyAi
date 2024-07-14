@@ -27,6 +27,9 @@ func init() {
 	checkNilErr(err)
 	err = os.MkdirAll(filepath.Dir(HistoryLocation), os.ModePerm)
 	checkNilErr(err)
+
+	logFile, _ := os.OpenFile("lazyai.log", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
+	log.SetOutput(logFile)
 }
 
 func checkNilErr(err error) {
