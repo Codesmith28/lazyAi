@@ -1,6 +1,6 @@
 package querymaker
 
-import "github.com/Codesmith28/cheatScript/internal"
+import "github.com/Codesmith28/lazyAi/internal"
 
 type Query = internal.Query
 

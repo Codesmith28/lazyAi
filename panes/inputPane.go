@@ -5,9 +5,9 @@ import (
 	"github.com/getlantern/systray"
 	"github.com/rivo/tview"
 
-	"github.com/Codesmith28/cheatScript/internal"
-	"github.com/Codesmith28/cheatScript/internal/clipboard"
-	querymaker "github.com/Codesmith28/cheatScript/internal/queryMaker"
+	"github.com/Codesmith28/lazyAi/internal"
+	"github.com/Codesmith28/lazyAi/internal/clipboard"
+	querymaker "github.com/Codesmith28/lazyAi/internal/queryMaker"
 )
 
 var (
