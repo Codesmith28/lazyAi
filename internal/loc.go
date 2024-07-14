@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"os/user"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -14,23 +13,21 @@ var (
 	filelocation    string
 	historyLocation string
 	apiKey          []byte
+	osType          string
 )
 
 func init() {
-	ostype := runtime.GOOS
-	hostname, _ := os.Hostname()
-	currentUser, _ := user.Current()
-	user := currentUser.Username
+	osType = runtime.GOOS
 
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		panic(err)
 	}
 
-	if ostype == "windows" {
+	if osType == "windows" {
 		filelocation = filepath.Join(homeDir, "AppData\\Local\\lazyAi\\lazy_ai_api")
 		historyLocation = filepath.Join(homeDir, "AppData\\Local\\lazyAi\\history.json")
-	} else if ostype == "darwin" {
+	} else if osType == "darwin" {
 		filelocation = filepath.Join(homeDir, "Library/Application Support/lazyAi/lazy_ai_api")
 		historyLocation = filepath.Join(homeDir, "Library/Application Support/lazyAi/history.json")
 	} else {
@@ -39,8 +36,6 @@ func init() {
 		distro := getDistro()
 		fmt.Println(distro)
 	}
-
-	fmt.Println(hostname, user, ostype)
 
 	apiKey, _ = os.ReadFile(filelocation)
 }
