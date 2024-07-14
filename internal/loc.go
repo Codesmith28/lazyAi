@@ -2,7 +2,6 @@ package internal
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -33,8 +32,6 @@ func init() {
 	} else {
 		filelocation = filepath.Join(homeDir, ".local/share/lazyAi/lazy_ai_api")
 		historyLocation = filepath.Join(homeDir, ".local/share/lazyAi/history.json")
-		distro := getDistro()
-		fmt.Println(distro)
 	}
 
 	apiKey, _ = os.ReadFile(filelocation)
@@ -61,10 +58,7 @@ func GetAPIKey() string {
 	return string(apiKey)
 }
 
-func UpdateNumberOfQueries() {
-}
-
-func getDistro() (distro string) {
+func GetDistro() (distro string) {
 	filename := "/etc/os-release"
 	file, err := os.Open(filename)
 	if err != nil {

@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Codesmith28/lazyAi/internal"
 	"github.com/google/generative-ai-go/genai"
 	"google.golang.org/api/option"
+
+	"github.com/Codesmith28/lazyAi/internal"
 )
 
 func checkNilErr(err error) {
@@ -53,6 +54,5 @@ func SendPrompt(promptString, modelName, inputString string) (string, error) {
 		return "", fmt.Errorf("unexpected response format")
 	}
 
-	internal.UpdateNumberOfQueries()
 	return string(promptAns), nil
 }

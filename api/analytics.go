@@ -8,14 +8,18 @@ import (
 	"net/http"
 	"os"
 	"os/user"
+	"runtime"
 
 	"github.com/joho/godotenv"
+
+	"github.com/Codesmith28/lazyAi/internal"
 )
 
 var (
 	jsonData    []byte
 	apiEndpoint string
 	client      *http.Client
+	distro      string
 )
 
 type AnalyticReport struct {
@@ -34,9 +38,15 @@ func init() {
 	err := godotenv.Load()
 	handleError("Error loading .env file", err)
 
-	osType := os.Getenv("OS")
+	// osType := os.Getenv("OS")
 	hostname, err := os.Hostname()
 	handleError("Error getting hostname", err)
+
+	userOs := runtime.GOOS
+	if userOs == "linux" {
+		distro = internal.GetDistro()
+		userOs = fmt.Sprintf("%s_%s", userOs, distro)
+	}
 
 	currentUser, err := user.Current()
 	handleError("Error getting current user", err)
@@ -48,7 +58,7 @@ func init() {
 	}
 
 	report := AnalyticReport{
-		OS:       osType,
+		OS:       userOs,
 		Hostname: hostname,
 		Username: username,
 	}
