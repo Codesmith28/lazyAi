@@ -39,8 +39,6 @@ func SendPrompt(promptString, modelName, inputString string) (string, error) {
 
 	resp, err := model.GenerateContent(ctx, genai.Text(fullPrompt))
 
-	go SendAnalyticReport()
-
 	if err != nil {
 		return "", fmt.Errorf("failed to generate content: %w", err)
 	}

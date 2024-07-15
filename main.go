@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -64,7 +65,7 @@ func main() {
 		credentialModal := panes.CreateCredentialModal(app, func(apiInput string) {
 			if ok := api.CheckCredentials("", &apiInput); !ok {
 				app.Stop()
-				log.Println("Invalid API key. Please try again.")
+				fmt.Println("Invalid API key. Please try again.")
 				return
 			}
 
