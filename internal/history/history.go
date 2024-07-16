@@ -74,7 +74,7 @@ func AddHistoryItem(history *History, query Query, output, historyFile string) e
 	}
 
 	history.HistoryMap[key] = historyItem
-	history.HistoryList = append(history.HistoryList, historyItem)
+	history.HistoryList = append([]HistoryItem{historyItem}, history.HistoryList...)
 	return SaveHistory(history, historyFile)
 }
 
