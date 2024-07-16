@@ -25,7 +25,26 @@ LazyAI is a Go TUI (Terminal User Interface) application that brings AI assistan
 <!-- video here -->
 
 ## Commands
-<!-- Add information about available commands here -->
+
+Most of the commands mentioned below, you can access by running
+```
+lazyAi -help
+```
+
+To start application
+```
+lazyAi
+```
+
+To run in detached mode
+```
+lazyAi -d
+```
+
+Run by providing default prompt (works with and without detached mode)
+```
+lazyAi -p "my default prompt"
+```
 
 ## Screenshots
 <!-- [Include 2-3 screenshots of your application here, showing key features] -->
