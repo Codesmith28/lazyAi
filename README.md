@@ -26,7 +26,9 @@ LazyAI is a Go TUI (Terminal User Interface) application that brings AI assistan
 ## Demonstration
 <!-- video here -->
 
-https://github.com/user-attachments/assets/2fddd89d-6f78-452a-b5e0-271a21a13e3a
+<https://github.com/user-attachments/assets/2fddd89d-6f78-452a-b5e0-271a21a13e3a>
+
+![Screenshot](./public/Screenshot_16-07-2024_174457.png)
 
 ## Commands
 
