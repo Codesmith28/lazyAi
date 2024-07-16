@@ -7,7 +7,6 @@ LazyAI is a Go TUI (Terminal User Interface) application that brings AI assistan
 - [Table of contents](#table-of-contents)
 - [Demonstration](#demonstration)
 - [Commands](#commands)
-- [Screenshots](#screenshots)
 - [Features](#features)
   - [✨ **Seamless Clipboard Integration**](#-seamless-clipboard-integration)
   - [🎛️ **Intuitive Dashboard**](#️-intuitive-dashboard)
@@ -55,10 +54,6 @@ Run by providing default prompt (works with and without detached mode)
 ```
 lazyAi -p "my default prompt"
 ```
-
-## Screenshots
-
-![Screenshot_16-07-2024_170814](https://github.com/user-attachments/assets/a1be0381-a590-4a7d-903c-5221234981ed)
 
 ## Features
 
