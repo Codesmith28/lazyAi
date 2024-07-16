@@ -17,7 +17,7 @@ func init() {
 
 	KeybindingsPane.SetText(
 		`M-1: Prompt | M-2: Input | M-3: Output | M-4: History | M-5: Models | M-S: Save current and create new state | M-O: Create new state | d: Delete history item`,
-	)
+	).SetTextColor(Theme.TitleCol)
 }
 
 // SetupGlobalKeybindings sets up global keybindings to focus on each pane.
