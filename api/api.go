@@ -42,16 +42,16 @@ func SendPrompt(promptString, modelName, inputString string) (string, error) {
 	go SendAnalyticReport()
 
 	if err != nil {
-		return "", fmt.Errorf("failed to generate content: %w", err)
+		return fmt.Sprintf("## Failed to generate because:\n %s \n \n for more info, **please visit**: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-attributes", err), nil
 	}
 
 	if resp == nil || len(resp.Candidates) == 0 {
-		return "", fmt.Errorf("no response generated")
+		return "Failed to generate content", nil
 	}
 
 	promptAns, ok := resp.Candidates[0].Content.Parts[0].(genai.Text)
 	if !ok {
-		return "", fmt.Errorf("unexpected response format")
+		return "Failed to generate content because of unexpected response format from API.", nil
 	}
 
 	return string(promptAns), nil
