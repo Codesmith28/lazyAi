@@ -1,13 +1,14 @@
 package panes
 
 import (
-	"github.com/Codesmith28/lazyAi/api"
-	"github.com/Codesmith28/lazyAi/internal"
-	"github.com/Codesmith28/lazyAi/internal/clipboard"
 	"github.com/charmbracelet/glamour"
 	"github.com/gdamore/tcell/v2"
 	"github.com/getlantern/systray"
 	"github.com/rivo/tview"
+
+	"github.com/Codesmith28/lazyAi/api"
+	"github.com/Codesmith28/lazyAi/internal"
+	"github.com/Codesmith28/lazyAi/internal/clipboard"
 )
 
 var (
@@ -17,7 +18,6 @@ var (
 )
 
 func init() {
-
 	var commands string = "\n## Commands:\n\n" +
 		"- run the application: `lazyAi`\n\n" +
 		"- run the application in detached mode: `lazyAi -d`\n" +
@@ -84,7 +84,6 @@ func HandlePromptChange(
 	OutputText.OutputString = content
 	clipboard.OutputText = content
 	err = clipboard.SetClipboardText(content)
-
 	if err != nil {
 		panic(err)
 	}
@@ -95,9 +94,7 @@ func HandlePromptChange(
 }
 
 func MarkdownToTview(md string, helpCommand *bool) string {
-
 	formattedOutput, err := glamour.Render(md, "dark")
-
 	if err != nil {
 		panic(err)
 	}

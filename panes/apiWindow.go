@@ -10,6 +10,13 @@ func CreateCredentialModal(
 ) tview.Primitive {
 	apiKey := ""
 
+	infoString := "Get your gemini api key from: https://aistudio.google.com/app/apikey"
+
+	info := tview.NewTextView().
+		SetText(infoString).
+		SetTextAlign(tview.AlignCenter).
+		SetDynamicColors(true)
+
 	form := tview.NewForm().
 		AddPasswordField("Api key", "", 43, '*', func(text string) {
 			apiKey = text
@@ -38,6 +45,7 @@ func CreateCredentialModal(
 		SetDirection(tview.FlexRow).
 		AddItem(nil, 0, 2, false).
 		AddItem(formContainer, 0, 1, true).
+		AddItem(info, 1, 1, true).
 		AddItem(nil, 0, 2, false)
 
 	return tview.NewPages().
