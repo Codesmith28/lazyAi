@@ -11,11 +11,21 @@ import (
 )
 
 var (
-	OutputPane *tview.TextView
-	OutputText = &internal.Output{}
+	OutputPane   *tview.TextView
+	OutputText   = &internal.Output{}
+	HelpCommands string
 )
 
 func init() {
+
+	var commands string = "\n## Commands:\n\n" +
+		"- run the application: `lazyAi`\n\n" +
+		"- run the application in detached mode: `lazyAi -d`\n" +
+		"- run the application with a default prompt: `lazyAi -p \"your prompt here\"`\n"
+
+	helpcmd := true
+	HelpCommands = markdownToTview(commands, &helpcmd)
+
 	OutputPane = tview.NewTextView()
 
 	OutputText = &internal.Output{
@@ -64,7 +74,7 @@ func HandlePromptChange(
 	}
 
 	if app != nil {
-		styledContent := markdownToTview(content)
+		styledContent := markdownToTview(content, nil)
 		app.QueueUpdateDraw(func() {
 			OutputPane.SetText(styledContent)
 		})
@@ -84,12 +94,16 @@ func HandlePromptChange(
 	systray.SetTooltip("Ready!!")
 }
 
-func markdownToTview(md string) string {
+func markdownToTview(md string, helpCommand *bool) string {
 
 	formattedOutput, err := glamour.Render(md, "dark")
 
 	if err != nil {
 		panic(err)
+	}
+
+	if helpCommand != nil && *helpCommand {
+		return formattedOutput
 	}
 
 	finalOutput := tview.TranslateANSI(formattedOutput)

@@ -53,7 +53,18 @@ func setupUI(detachedMode *bool, app *tview.Application) {
 func main() {
 	detachedMode := flag.Bool("d", false, "Run in detached mode")
 	defaultPrompt := flag.String("p", "", "Set the default prompt")
+	helpCommand := flag.Bool("help", false, "Show help commands")
 	flag.Parse()
+
+	if (*defaultPrompt != "" || *detachedMode) && *helpCommand {
+		fmt.Println("Not allowed to use -p or -d and -help together. Exiting...")
+		os.Exit(1)
+	}
+
+	if *helpCommand {
+		fmt.Println(panes.HelpCommands)
+		os.Exit(0)
+	}
 
 	if *defaultPrompt != "" {
 		PromptText.PromptString = *defaultPrompt
