@@ -90,7 +90,7 @@ func loadState(item history.HistoryItem) {
 	InputText.InputString = item.Query.InputString
 	PromptText.PromptString = item.Query.PromptString
 	Selected.SelectedModel = item.Query.SelectedModel
-	OutputText.OutputString = item.Output
+	OutputText.OutputString = MarkdownToTview(item.Output, nil)
 	updatePanes(item.Query.SelectedModel)
 }
 

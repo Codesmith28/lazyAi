@@ -24,7 +24,7 @@ func init() {
 		"- run the application with a default prompt: `lazyAi -p \"your prompt here\"`\n"
 
 	helpcmd := true
-	HelpCommands = markdownToTview(commands, &helpcmd)
+	HelpCommands = MarkdownToTview(commands, &helpcmd)
 
 	OutputPane = tview.NewTextView()
 
@@ -74,7 +74,7 @@ func HandlePromptChange(
 	}
 
 	if app != nil {
-		styledContent := markdownToTview(content, nil)
+		styledContent := MarkdownToTview(content, nil)
 		app.QueueUpdateDraw(func() {
 			OutputPane.SetText(styledContent)
 		})
@@ -94,7 +94,7 @@ func HandlePromptChange(
 	systray.SetTooltip("Ready!!")
 }
 
-func markdownToTview(md string, helpCommand *bool) string {
+func MarkdownToTview(md string, helpCommand *bool) string {
 
 	formattedOutput, err := glamour.Render(md, "dark")
 
