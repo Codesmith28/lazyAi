@@ -1,9 +1,10 @@
 package panes
 
 import (
-	"github.com/Codesmith28/lazyAi/internal"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+
+	"github.com/Codesmith28/lazyAi/internal"
 )
 
 var KeybindingsPane *tview.TextView
@@ -15,7 +16,7 @@ func init() {
 		SetWrap(true)
 
 	KeybindingsPane.SetText(
-		`M-1: Prompt | M-2: Input | M-3: Output | M-4: History | M-5: Models | M-S: Save current and create new state | M-O: Create new state`,
+		`M-1: Prompt | M-2: Input | M-3: Output | M-4: History | M-5: Models | M-S: Save current and create new state | M-O: Create new state | d: Delete history item`,
 	)
 }
 
