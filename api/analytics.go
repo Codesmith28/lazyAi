@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"os/user"
 	"runtime"
 
@@ -32,6 +33,9 @@ func handleError(message string, err error) {
 }
 
 func init() {
+	hostname, err := os.Hostname()
+	handleError("Error getting hostname", err)
+
 	userOs := runtime.GOOS
 	if userOs == "linux" {
 		distro = internal.GetDistro()
@@ -46,7 +50,7 @@ func init() {
 
 	report := AnalyticReport{
 		OS:       userOs,
-		Hostname: "",
+		Hostname: hostname,
 		Username: username,
 	}
 
