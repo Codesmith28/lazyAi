@@ -8,7 +8,6 @@ require (
 	github.com/gdamore/tcell/v2 v2.7.4
 	github.com/getlantern/systray v1.2.2
 	github.com/google/generative-ai-go v0.14.0
-	github.com/joho/godotenv v1.5.1
 	github.com/rivo/tview v0.0.0-20240622152042-c38c796625fb
 	google.golang.org/api v0.180.0
 )

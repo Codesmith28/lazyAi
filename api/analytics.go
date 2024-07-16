@@ -6,11 +6,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"os/user"
 	"runtime"
-
-	"github.com/joho/godotenv"
 
 	"github.com/Codesmith28/lazyAi/internal"
 )
@@ -35,13 +32,6 @@ func handleError(message string, err error) {
 }
 
 func init() {
-	err := godotenv.Load()
-	handleError("Error loading .env file", err)
-
-	// osType := os.Getenv("OS")
-	hostname, err := os.Hostname()
-	handleError("Error getting hostname", err)
-
 	userOs := runtime.GOOS
 	if userOs == "linux" {
 		distro = internal.GetDistro()
@@ -52,14 +42,11 @@ func init() {
 	handleError("Error getting current user", err)
 	username := currentUser.Username
 
-	apiEndpoint = os.Getenv("ANALYTICS_API_ENDPOINT")
-	if apiEndpoint == "" {
-		handleError("ANALYTICS_API_ENDPOINT not set in .env file", fmt.Errorf("empty endpoint"))
-	}
+	apiEndpoint = "https://lazyai-server.onrender.com"
 
 	report := AnalyticReport{
 		OS:       userOs,
-		Hostname: hostname,
+		Hostname: "",
 		Username: username,
 	}
 
