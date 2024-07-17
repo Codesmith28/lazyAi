@@ -87,7 +87,7 @@ lazyAi -p "my default prompt"
 
 ## Installation
 
-Install LazyAI using the to our releases page: [LazyAI Releases](link)
+Install LazyAI using the to our releases page: [LazyAI Releases](https://github.com/Codesmith28/lazyAi/releases)
 
 ## Contributions
 
