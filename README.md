@@ -99,8 +99,12 @@ We look forward to your pull requests and thank you for your interest in improvi
 
 ## Contributors
 
-To be made with [Contrib rocks](https://contrib.rocks/)
+<a href="https://github.com/Codesmith28/lazyAi/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Codesmith28/lazyAi" />
+</a>
 
+
+Made with [contrib.rocks](https://contrib.rocks).
 ## Acknowledgements
 
 LazyAI wouldn't be possible without these amazing open-source projects:
