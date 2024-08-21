@@ -89,6 +89,8 @@ lazyAi -p "my default prompt"
 
 Install LazyAI using the link to our releases page: [LazyAI Releases](https://github.com/Codesmith28/lazyAi/releases)
 
+**Note: Linux users must download xclip as a dependency.**
+
 ## Contributions
 
 We welcome and appreciate contributions from the community! Whether it's bug fixes, feature enhancements, documentation improvements, or any other valuable input, your contributions help make LazyAI better for everyone.
