@@ -23,7 +23,7 @@ func init() {
 	ModelList.ShowSecondaryText(false).SetTitle(" Models ").SetBorder(true)
 	Selected = &internal.Model{}
 
-	SelectModel(availableModels["Gemini Flash"].SelectedModel)
+	SelectModel(availableModels["Gemini Pro 1.5"].SelectedModel)
 
 	// Add models to the list
 	for key, model := range availableModels {
