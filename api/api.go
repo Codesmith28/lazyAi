@@ -42,7 +42,10 @@ func SendPrompt(promptString, modelName, inputString string) (string, error) {
 	go SendAnalyticReport()
 
 	if err != nil {
-		return fmt.Sprintf("## Failed to generate because:\n %s \n \n for more info, **please visit**: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-attributes", err), nil
+		return fmt.Sprintf(
+			"## Failed to generate because:\n %s \n \n for more info, **please visit**: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-attributes",
+			err,
+		), nil
 	}
 
 	if resp == nil || len(resp.Candidates) == 0 {

@@ -13,9 +13,10 @@ var (
 )
 
 var availableModels = map[string]*internal.Model{
-	"Gemini Flash":   {SelectedModel: "gemini-1.5-flash"},
-	"Gemini Pro 1.0": {SelectedModel: "gemini-1.0-pro"},
-	"Gemini Pro 1.5": {SelectedModel: "gemini-1.5-pro"},
+	"Gemini 2.0 Flash":      {SelectedModel: "gemini-2.0-flash"},
+	"Gemini 2.0 Flash-Lite": {SelectedModel: "gemini-2.0-flash-lite"},
+	"Gemini Pro 1.5":        {SelectedModel: "gemini-1.5-pro"},
+	"Gemini Flash":          {SelectedModel: "gemini-1.5-flash"},
 }
 
 func init() {
@@ -23,7 +24,7 @@ func init() {
 	ModelList.ShowSecondaryText(false).SetTitle(" Models ").SetBorder(true)
 	Selected = &internal.Model{}
 
-	SelectModel(availableModels["Gemini Pro 1.5"].SelectedModel)
+	SelectModel(availableModels["Gemini 2.0 Flash"].SelectedModel)
 
 	// Add models to the list
 	for key, model := range availableModels {
