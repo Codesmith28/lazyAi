@@ -29,6 +29,10 @@ Here's how you can contribute code to LazyAI:
 ```
 cd lazyAi
 ```
+4. For Linux users
+```
+make deps
+```
 4. Run the application:
 - with UI
   ```
