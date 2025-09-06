@@ -12,7 +12,7 @@ var (
 	Selected  *internal.Model
 )
 
-var availableModels = map[string]*internal.Model{
+var AvailableModels = map[string]*internal.Model{
 	"Gemini 2.0 Flash":      {SelectedModel: "gemini-2.0-flash"},
 	"Gemini 2.0 Flash-Lite": {SelectedModel: "gemini-2.0-flash-lite"},
 	"Gemini Pro 1.5":        {SelectedModel: "gemini-1.5-pro"},
@@ -24,10 +24,10 @@ func init() {
 	ModelList.ShowSecondaryText(false).SetTitle(" Models ").SetBorder(true)
 	Selected = &internal.Model{}
 
-	SelectModel(availableModels["Gemini 2.0 Flash"].SelectedModel)
+	SelectModel(AvailableModels["Gemini 2.0 Flash"].SelectedModel)
 
 	// Add models to the list
-	for key, model := range availableModels {
+	for key, model := range AvailableModels {
 		currentModel := model
 		ModelList.AddItem(key, "", 0, func() {
 			SelectModel(currentModel.SelectedModel)
@@ -40,7 +40,7 @@ func init() {
 		case tcell.KeyEnter:
 			currentItem := ModelList.GetCurrentItem()
 			mainText, _ := ModelList.GetItemText(currentItem)
-			SelectModel(availableModels[mainText].SelectedModel)
+			SelectModel(AvailableModels[mainText].SelectedModel)
 		}
 		return event
 	})
