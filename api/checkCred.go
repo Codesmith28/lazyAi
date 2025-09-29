@@ -1,9 +1,6 @@
 package api
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -25,34 +22,22 @@ func CheckCredentials(FileLocation string, inputApiKey *string) bool {
 		}
 	}
 
-	// Validate the API key by pinging an endpoint
+	// Validate the API key by listing models
 	apiKeyStr := strings.TrimSpace(string(apiKey))
 	client := &http.Client{Timeout: 10 * time.Second}
-	url := fmt.Sprintf(
-		"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=%s",
-		apiKeyStr,
-	)
+	url := "https://generativelanguage.googleapis.com/v1beta/models"
 
-	payload := map[string]interface{}{
-		"contents": []map[string]interface{}{
-			{
-				"parts": []map[string]interface{}{
-					{"text": "Explain how AI works"},
-				},
-			},
-		},
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return false
 	}
 
-	payloadBytes, err := json.Marshal(payload)
-	checkNilErr(err)
-
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(payloadBytes))
-	checkNilErr(err)
-
-	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("x-goog-api-key", apiKeyStr)
 
 	resp, err := client.Do(req)
-	checkNilErr(err)
+	if err != nil {
+		return false
+	}
 	defer resp.Body.Close()
 
 	return resp.StatusCode == http.StatusOK
