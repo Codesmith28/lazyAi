@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/Codesmith28/lazyAi/internal/clipboard"
 	"github.com/getlantern/systray"
 	"github.com/rivo/tview"
 )
@@ -13,13 +14,14 @@ import (
 //go:embed lazyAi.ico
 var iconBytes []byte
 
-func ApplySystemNavConfig(app *tview.Application) {
+func ApplySystemNavConfig(app *tview.Application, clipboard *clipboard.Clipboard) {
 	onReady := func() {
 		systray.SetIcon(iconBytes)
 		systray.SetTitle("AI model is now on your clipboard!!")
 		systray.SetTooltip("Started!")
 
 		mQuit := systray.AddMenuItem("Quit", "Quit the whole app")
+		stopMonitoring := systray.AddMenuItem("Pause", "Pause the clipboard monitoring")
 
 		go func() {
 			<-mQuit.ClickedCh
@@ -27,6 +29,22 @@ func ApplySystemNavConfig(app *tview.Application) {
 				app.Stop()
 			}
 			systray.Quit()
+		}()
+
+		go func() {
+			for {
+				<-stopMonitoring.ClickedCh
+
+				if clipboard.Disable {
+					clipboard.Disable = false
+					stopMonitoring.SetTitle("Pause")
+					stopMonitoring.SetTooltip("Pause the clipboard monitoring")
+				} else {
+					clipboard.Disable = true
+					stopMonitoring.SetTitle("Resume")
+					stopMonitoring.SetTooltip("Resume the clipboard monitoring")
+				}
+			}
 		}()
 
 		c := make(chan os.Signal, 1)
@@ -46,5 +64,4 @@ func ApplySystemNavConfig(app *tview.Application) {
 }
 
 func onExit() {
-	// clean up here
 }

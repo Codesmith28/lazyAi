@@ -40,6 +40,8 @@ func init() {
 func StartClipboardMonitoring(app *tview.Application) {
 	clipboard.Clear()
 	clipboard := clipboard.NewClipboard()
+	ApplySystemNavConfig(app, clipboard)
+
 	var lastPublishedText string
 
 	go clipboard.StartMonitoring()

@@ -15,6 +15,7 @@ type Clipboard struct {
 	LastText   string
 	Mu         sync.RWMutex
 	OutputText string
+	Disable    bool
 }
 
 func NewClipboard() *Clipboard {
@@ -27,20 +28,26 @@ func NewClipboard() *Clipboard {
 
 func (c *Clipboard) StartMonitoring() {
 	for {
-		c.Mu.Lock()
-		text, err := clipboard.ReadAll()
-		if err != nil || strings.TrimSpace(text) == "" {
+		switch {
+		case c.Disable:
+			time.Sleep(1 * time.Second)
+		default:
+			c.Mu.Lock()
+			text, err := clipboard.ReadAll()
+			if err != nil || strings.TrimSpace(text) == "" {
+				c.Mu.Unlock()
+				time.Sleep(100 * time.Millisecond) // Add a small delay to prevent tight looping
+				continue
+			}
+
+			if !isLikelyScreenshot(text) && text != c.LastText && text != c.OutputText {
+				c.LastText = text
+				c.Prompt <- text
+			}
 			c.Mu.Unlock()
 			time.Sleep(100 * time.Millisecond) // Add a small delay to prevent tight looping
-			continue
 		}
-
-		if !isLikelyScreenshot(text) && text != c.LastText && text != c.OutputText {
-			c.LastText = text
-			c.Prompt <- text
-		}
-		c.Mu.Unlock()
-		time.Sleep(100 * time.Millisecond) // Add a small delay to prevent tight looping
+		time.Sleep(100 * time.Millisecond)
 	}
 }
 
