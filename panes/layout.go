@@ -37,12 +37,8 @@ func CreateMainFlex(group1 *tview.Flex, keybindingsPane *tview.TextView) *tview.
 }
 
 func SetupMainUILayout(app *tview.Application) {
-	if app == nil {
-		StartClipboardMonitoring(nil)
-		ApplySystemNavConfig(nil)
-
-		select {}
-	} else {
+	StartClipboardMonitoring(app)
+	if app != nil {
 		group2 := CreateGroup2(HistoryPane, ModelList)
 		group4 := CreateGroup4(InputPane, PromptPane)
 		group3 := CreateGroup3(group4, OutputPane)
@@ -70,10 +66,9 @@ func SetupMainUILayout(app *tview.Application) {
 		app.SetRoot(mainFlex, true)
 		log.Println("Running app for main UI.")
 
-		StartClipboardMonitoring(app)
-		ApplySystemNavConfig(app)
-
 		err := app.Run()
 		checkNilErr(err)
+	} else {
+		select {}
 	}
 }
