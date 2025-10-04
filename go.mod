@@ -7,14 +7,14 @@ require (
 	github.com/charmbracelet/glamour v0.7.0
 	github.com/gdamore/tcell/v2 v2.7.4
 	github.com/getlantern/systray v1.2.2
-	github.com/google/generative-ai-go v0.14.0
+	github.com/google/generative-ai-go v0.20.1
 	github.com/rivo/tview v0.0.0-20240622152042-c38c796625fb
 	google.golang.org/api v0.251.0
 )
 
 require (
 	cloud.google.com/go v0.120.0 // indirect
-	cloud.google.com/go/ai v0.6.0 // indirect
+	cloud.google.com/go/ai v0.8.0 // indirect
 	cloud.google.com/go/auth v0.16.5 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
 	cloud.google.com/go/compute/metadata v0.9.0 // indirect
@@ -64,7 +64,6 @@ require (
 	golang.org/x/term v0.35.0 // indirect
 	golang.org/x/text v0.29.0 // indirect
 	golang.org/x/time v0.13.0 // indirect
-	google.golang.org/genproto v0.0.0-20250603155806-513f23925822 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250707201910-8d1bb00bc6a7 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250929231259-57b25ae835d4 // indirect
 	google.golang.org/grpc v1.75.1 // indirect
