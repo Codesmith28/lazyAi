@@ -90,7 +90,12 @@ func main() {
 	}
 
 	if !validModel {
-		throwInvalidModelErr()
+		// throwInvalidModelErr()
+		// use the first model available from the list:
+		for _, model := range panes.AvailableModels {
+			*defaultModel = model.SelectedModel
+			break
+		}
 	}
 
 	panes.Selected.SelectedModel = *defaultModel
