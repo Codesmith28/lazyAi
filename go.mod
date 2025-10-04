@@ -5,10 +5,10 @@ go 1.24.0
 require (
 	github.com/atotto/clipboard v0.1.4
 	github.com/charmbracelet/glamour v0.7.0
-	github.com/gdamore/tcell/v2 v2.7.4
+	github.com/gdamore/tcell/v2 v2.8.1
 	github.com/getlantern/systray v1.2.2
 	github.com/google/generative-ai-go v0.14.0
-	github.com/rivo/tview v0.0.0-20240622152042-c38c796625fb
+	github.com/rivo/tview v0.42.0
 	google.golang.org/api v0.251.0
 )
 
@@ -24,7 +24,7 @@ require (
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/dlclark/regexp2 v1.4.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
-	github.com/gdamore/encoding v1.0.0 // indirect
+	github.com/gdamore/encoding v1.0.1 // indirect
 	github.com/getlantern/context v0.0.0-20190109183933-c447772a6520 // indirect
 	github.com/getlantern/errors v0.0.0-20190325191628-abdb3e3e36f7 // indirect
 	github.com/getlantern/golog v0.0.0-20190830074920-4ef2e798c2d7 // indirect
@@ -41,7 +41,7 @@ require (
 	github.com/gorilla/css v1.0.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.18 // indirect
-	github.com/mattn/go-runewidth v0.0.15 // indirect
+	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.25 // indirect
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/termenv v0.15.2 // indirect
