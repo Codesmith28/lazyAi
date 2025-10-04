@@ -18,6 +18,7 @@ var (
 	FileLocation    string
 	HistoryLocation string
 	PromptText      = panes.PromptText
+	SelectedModel   = panes.Selected
 )
 
 func init() {
@@ -29,7 +30,7 @@ func init() {
 	err = os.MkdirAll(filepath.Dir(HistoryLocation), os.ModePerm)
 	checkNilErr(err)
 
-	logFile, _ := os.OpenFile("lazyai.log", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
+	logFile, _ := os.OpenFile("lazyai.log", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o666)
 	log.SetOutput(logFile)
 }
 
@@ -50,8 +51,17 @@ func setupUI(detachedMode *bool, app *tview.Application) {
 	}
 }
 
+func throwInvalidModelErr() {
+	fmt.Println("Invalid model used, available models:")
+	for _, model := range panes.AvailableModels {
+		fmt.Println(model.SelectedModel)
+	}
+	os.Exit(0)
+}
+
 func main() {
 	detachedMode := flag.Bool("d", false, "Run in detached mode")
+	defaultModel := flag.String("m", "gemini-2.0-flash", "Set the default model to use")
 	defaultPrompt := flag.String("p", "", "Set the default prompt")
 	helpCommand := flag.Bool("help", false, "Show help commands")
 	flag.Parse()
@@ -70,6 +80,21 @@ func main() {
 		PromptText.PromptString = *defaultPrompt
 	}
 
+	// check if we support specified model
+	validModel := false
+	for _, v := range panes.AvailableModels {
+		if v.SelectedModel == *defaultModel {
+			validModel = true
+			break
+		}
+	}
+
+	if !validModel {
+		throwInvalidModelErr()
+	}
+
+	panes.Selected.SelectedModel = *defaultModel
+
 	app := tview.NewApplication().EnableMouse(true)
 
 	if !api.CheckCredentials(FileLocation, nil) {
@@ -80,7 +105,7 @@ func main() {
 				return
 			}
 
-			err := os.WriteFile(FileLocation, []byte(apiInput), 0644)
+			err := os.WriteFile(FileLocation, []byte(apiInput), 0o644)
 			checkNilErr(err)
 
 			log.Println("Starting clipboard monitoring after credential input.")

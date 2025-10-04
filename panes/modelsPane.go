@@ -26,7 +26,7 @@ func init() {
 	SelectModel(availableModels["Gemini 2.5 Flash"].SelectedModel)
 
 	// Add models to the list
-	for key, model := range availableModels {
+	for key, model := range AvailableModels {
 		currentModel := model
 		ModelList.AddItem(key, "", 0, func() {
 			SelectModel(currentModel.SelectedModel)
@@ -39,7 +39,7 @@ func init() {
 		case tcell.KeyEnter:
 			currentItem := ModelList.GetCurrentItem()
 			mainText, _ := ModelList.GetItemText(currentItem)
-			SelectModel(availableModels[mainText].SelectedModel)
+			SelectModel(AvailableModels[mainText].SelectedModel)
 		}
 		return event
 	})

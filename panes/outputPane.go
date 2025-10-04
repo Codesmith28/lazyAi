@@ -18,10 +18,11 @@ var (
 )
 
 func init() {
-	var commands string = "\n## Commands:\n\n" +
+	commands := "\n## Commands:\n\n" +
 		"- run the application: `lazyAi`\n\n" +
 		"- run the application in detached mode: `lazyAi -d`\n" +
-		"- run the application with a default prompt: `lazyAi -p \"your prompt here\"`\n"
+		"- run the application with a default prompt: `lazyAi -p \"your prompt here\"`\n" +
+		"- run the application with a default model: `lazyAi -m \"gemini-2.0-flash\"`\n"
 
 	helpcmd := true
 	HelpCommands = MarkdownToTview(commands, &helpcmd)
