@@ -81,15 +81,21 @@ func HandlePromptChange(
 		})
 	}
 
-	clipboard.Mu.Lock()
+	// Update the in-memory output for the UI immediately
 	OutputText.OutputString = content
+
+	// Set the clipboard's OutputText under the clipboard mutex to avoid races
+	clipboard.Mu.Lock()
 	clipboard.OutputText = content
+	clipboard.Mu.Unlock()
+
+	// Write to the system clipboard. Do NOT hold clipboard.Mu while calling
+	// SetClipboardText because it acquires the same mutex internally and
+	// would deadlock if we held it here.
 	err = clipboard.SetClipboardText(content)
 	if err != nil {
 		panic(err)
 	}
-
-	clipboard.Mu.Unlock()
 
 	systray.SetTooltip("Ready!!")
 }
