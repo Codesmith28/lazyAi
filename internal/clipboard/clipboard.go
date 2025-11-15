@@ -19,7 +19,7 @@ type Clipboard struct {
 
 func NewClipboard() *Clipboard {
 	return &Clipboard{
-		Prompt:   make(chan string),
+		Prompt:   make(chan string, 1),
 		LastText: "",
 		Mu:       sync.RWMutex{},
 	}
@@ -27,19 +27,27 @@ func NewClipboard() *Clipboard {
 
 func (c *Clipboard) StartMonitoring() {
 	for {
-		c.Mu.Lock()
 		text, err := clipboard.ReadAll()
 		if err != nil || strings.TrimSpace(text) == "" {
-			c.Mu.Unlock()
 			time.Sleep(100 * time.Millisecond) // Add a small delay to prevent tight looping
 			continue
 		}
 
-		if !isLikelyScreenshot(text) && text != c.LastText && text != c.OutputText {
+		if isLikelyScreenshot(text) {
+			time.Sleep(100 * time.Millisecond)
+			continue
+		}
+
+		c.Mu.Lock()
+		if text != c.LastText && text != c.OutputText {
 			c.LastText = text
-			c.Prompt <- text
+			select {
+			case c.Prompt <- text:
+			default:
+			}
 		}
 		c.Mu.Unlock()
+
 		time.Sleep(100 * time.Millisecond) // Add a small delay to prevent tight looping
 	}
 }
