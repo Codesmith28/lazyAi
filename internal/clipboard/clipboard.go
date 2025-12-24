@@ -6,7 +6,6 @@ import (
 	"crypto/sha256"
 	"encoding/binary"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -141,10 +140,12 @@ func (c *Clipboard) monitorPortalClipboard() error {
 		for scanner.Scan() {
 			line := scanner.Text()
 			if strings.Contains(line, "SelectionOwnerChanged") {
+				// wl-paste returns the complete clipboard content as a single output
 				text, err := exec.Command("wl-paste").Output()
 				if err != nil {
 					continue
 				}
+				// Process the complete clipboard content as a single unit
 				c.processClipboardText(strings.TrimSpace(string(text)))
 			}
 		}
@@ -157,20 +158,9 @@ func (c *Clipboard) monitorPortalClipboard() error {
 	return nil
 }
 
-/* =============================
+/* ===========e=================
    Shared Helpers
    ============================= */
-
-func (c *Clipboard) readClipboardStream(stdout io.Reader, source string) {
-	scanner := bufio.NewScanner(stdout)
-	for scanner.Scan() {
-		text := strings.TrimSpace(scanner.Text())
-		c.processClipboardText(text)
-	}
-	if err := scanner.Err(); err != nil {
-		log.Printf("[%s] stream read error: %v\n", source, err)
-	}
-}
 
 func (c *Clipboard) processClipboardText(text string) {
 	if text == "" {
